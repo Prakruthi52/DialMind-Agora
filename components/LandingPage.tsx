@@ -83,6 +83,7 @@ export default function LandingPage() {
   const [profile, setProfile] = useState<FarmerProfile | null>(null);
   const [mediaPrefs, setMediaPrefs] = useState({ camera: true, mic: true });
   const [callSeconds, setCallSeconds] = useState(0);
+  const [lastSessionId, setLastSessionId] = useState<string | undefined>();
 
   // Restore a remembered sign-in and preload heavy modules so "Start call" is fast.
   useEffect(() => {
@@ -276,6 +277,7 @@ export default function LandingPage() {
     rtmClient?.logout().catch((err) => console.error('RTM logout error:', err));
     setRtmClient(null);
     setCallSeconds(Math.round((Date.now() - callStartRef.current) / 1000));
+    setLastSessionId(agoraData?.sessionId);
     setStage('ended');
   };
 
@@ -301,6 +303,7 @@ export default function LandingPage() {
       <CallEndedScreen
         profile={profile}
         durationSeconds={callSeconds}
+        sessionId={lastSessionId}
         onNewCall={() => setStage('lobby')}
         onSignOut={handleSignOut}
       />

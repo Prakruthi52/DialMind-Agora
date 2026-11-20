@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { queryOne, run } from '@/lib/db';
 import { endSession } from '@/lib/engine/flow';
+import { reviewSession } from '@/lib/console/judge';
+
+export const maxDuration = 60;
 
 // Call trace from the browser: transcript turns, agent state changes, per-stage latency
 // metrics and errors. Feeds the claims console. Batched by the client.
@@ -24,6 +27,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       JSON.stringify(e.payload).slice(0, 8000),
     ]);
   }
-  if (body?.ended) await endSession(id);
+  if (body?.ended) {
+    await endSession(id);
+    // Post-call review (disposition + judge) in the background, after trailing tool-call
+    // logs have landed. after() keeps the serverless function alive until it finishes.
+    after(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 4000));
+      await reviewSession(id).catch((error) => console.warn('Post-call review failed:', error));
+    });
+  }
   return NextResponse.json({ stored: events.length });
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { CheckCircle2, LogOut, PhoneCall } from 'lucide-react';
+import { BarChart3, CheckCircle2, LogOut, PhoneCall } from 'lucide-react';
 import type { FarmerProfile } from '@/types/conversation';
 import { getTranslator } from '@/lib/i18n';
 import { DialMindLogo, Toran } from './brand';
@@ -17,11 +17,13 @@ export function CallEndedScreen({
   durationSeconds,
   onNewCall,
   onSignOut,
+  sessionId,
 }: {
   profile: FarmerProfile;
   durationSeconds: number;
   onNewCall: () => void;
   onSignOut: () => void;
+  sessionId?: string;
 }) {
   const t = getTranslator(profile.language);
   return (
@@ -53,6 +55,14 @@ export function CallEndedScreen({
           >
             <LogOut className="h-4 w-4" /> {t('signOut')}
           </button>
+          {sessionId && (
+            <a
+              href={`/console/${sessionId}`}
+              className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[#1f6b45] underline-offset-4 hover:underline"
+            >
+              <BarChart3 className="h-4 w-4" /> View call review (DialMind console)
+            </a>
+          )}
         </div>
       </div>
     </main>

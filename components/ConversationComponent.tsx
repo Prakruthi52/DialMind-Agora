@@ -48,6 +48,7 @@ import type { ConnectionIssue } from './ConversationErrorCard';
 import { getTranslator, type Translate } from '@/lib/i18n';
 import { DialMindLogo, languageLabel, Toran } from './brand';
 import { ClaimPanel, type SessionState } from './ClaimPanel';
+import { useCallRecorder } from './useCallRecorder';
 import type { ConversationComponentProps } from '@/types/conversation';
 
 // Cap the displayed issues list to avoid overwhelming the UI during a cascade of errors.
@@ -523,6 +524,19 @@ export default function ConversationComponent({
   // With an avatar, Vanya's lip-synced audio comes from the avatar UID; avoid double audio.
   const avatarCarriesAudio = !!avatarUser?.hasAudio;
 
+  // Browser-side call recording (avatar + farmer camera, mixed audio) for the claims console.
+  const { stopAndUpload, enabled: recordingEnabled } = useCallRecorder(sessionId, joinSuccess, {
+    avatarUser,
+    remoteUsers,
+    camera: localCameraTrack,
+    cameraOn: isCameraOn,
+    mic: localMicrophoneTrack,
+  });
+  const handleEndCall = useCallback(() => {
+    stopAndUpload();
+    onEndConversation();
+  }, [stopAndUpload, onEndConversation]);
+
   useClientEvent(client, 'user-joined', (user) => {
     if (user.uid.toString() === agentUID) setIsAgentConnected(true);
   });
@@ -630,6 +644,11 @@ export default function ConversationComponent({
             }`}
           />
           <span className="font-medium tabular-nums">{formatClock(elapsed)}</span>
+          {recordingEnabled && sessionId && (
+            <span className="flex items-center gap-1 rounded-full bg-[#d92d20]/90 px-2 py-0.5 text-[11px] font-semibold" title="This call is recorded for quality review">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" /> REC
+            </span>
+          )}
           <span className="hidden text-white/60 sm:inline">· {t('cropClaim')}</span>
         </div>
         <span className="rounded-full bg-white/10 px-3 py-1.5 text-sm backdrop-blur-md">
@@ -795,7 +814,7 @@ export default function ConversationComponent({
               <MessageSquareText className="h-6 w-6" />
             </button>
             <button
-              onClick={onEndConversation}
+              onClick={handleEndCall}
               aria-label={t('endCall')}
               className="flex h-14 items-center gap-2 rounded-full bg-[#d92d20] px-6 font-semibold transition hover:bg-[#b42318]"
             >

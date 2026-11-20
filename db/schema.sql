@@ -215,6 +215,33 @@ CREATE TABLE IF NOT EXISTS follow_ups (
   status            TEXT NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled','sent','failed'))
 );
 
+-- Post-call review: rule-based disposition + metrics, refined by the LLM judge (Claude Haiku).
+CREATE TABLE IF NOT EXISTS session_reviews (
+  session_id        TEXT PRIMARY KEY REFERENCES sessions(id),
+  disposition       TEXT NOT NULL,           -- code from lib/console/dispositions.ts
+  disposition_reason TEXT NOT NULL,
+  rule_disposition  TEXT NOT NULL,           -- what the deterministic classifier said
+  quality_score     INTEGER,                 -- 0-100 overall (judge); NULL when only rules ran
+  rule_score        INTEGER NOT NULL,        -- 0-100 from measurable signals
+  scores            TEXT,                    -- JSON rubric scores (judge)
+  summary           TEXT,
+  issues            TEXT,                    -- JSON [{moment, problem, suggestion, severity}]
+  improvements      TEXT,                    -- JSON string[]
+  judge_model       TEXT,                    -- e.g. claude-haiku-5-5; NULL = rules only
+  judge_error       TEXT,
+  created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Call recording (avatar + farmer camera composite with mixed audio), stored in Vercel Blob.
+CREATE TABLE IF NOT EXISTS session_recordings (
+  session_id        TEXT PRIMARY KEY REFERENCES sessions(id),
+  url               TEXT NOT NULL,
+  content_type      TEXT NOT NULL,
+  size_bytes        INTEGER,
+  duration_s        INTEGER,
+  created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE INDEX IF NOT EXISTS idx_answers_session ON answers(session_id);
 CREATE INDEX IF NOT EXISTS idx_tool_calls_session ON tool_calls(session_id);
 CREATE INDEX IF NOT EXISTS idx_events_session ON session_events(session_id);
