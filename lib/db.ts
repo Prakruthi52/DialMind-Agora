@@ -34,6 +34,11 @@ async function init(): Promise<void> {
   if (Number(seeded.rows[0]?.n ?? 0) === 0 || forceReseed) {
     await db.executeMultiple(readSql('seed.sql'));
   }
+  // Colloquial wording for every language (translations, synonyms, lexicon).
+  const translated = await db.execute('SELECT COUNT(*) AS n FROM translations');
+  if (Number(translated.rows[0]?.n ?? 0) === 0 || forceReseed) {
+    await db.executeMultiple(readSql('seed_i18n.sql'));
+  }
 }
 
 export async function getDb(): Promise<Client> {

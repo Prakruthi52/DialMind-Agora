@@ -1,0 +1,501 @@
+// Source for db/seed_i18n.sql (generate with: node db/i18n/build-seed.mjs).
+// Colloquial, spoken wording: everyday words farmers actually use, with common English
+// loanwords (mobile, policy, claim, SMS, acre, percent) the way people say them.
+// Placeholders: {farmer_name} {village} {insured_crops} {crop} {insured_area}
+// {mobile_last4} {sowing_date} {summary} {claim_id} {surveyor_date}
+// NOTE: please have a native speaker review each language before production use.
+
+export const LANGS = {
+  // ───────────────────────── Hindi (Hinglish-style, Devanagari) ─────────────────────────
+  hi: {
+    agent: {
+      greeting:
+        'नमस्ते जी, मैं DialMind से वान्या बोल रही हूँ। फसल का नुकसान हुआ है, सुनकर बहुत बुरा लगा। चिंता मत कीजिए, बस कुछ छोटे-छोटे सवाल पूछूँगी और आपका claim दर्ज कर दूँगी।',
+      closing_filed:
+        'हो गया जी, आपका claim दर्ज हो गया है। आपका claim नंबर है {claim_id}। SMS आ जाएगा, और {surveyor_date} तक surveyor आपके खेत पर आ जाएँगे। अपना ध्यान रखिए।',
+      closing_area_based:
+        'आपकी शिकायत दर्ज कर ली है। पूरे इलाके का आकलन होते ही SMS आ जाएगा। DialMind को call करने के लिए धन्यवाद।',
+      closing_not_covered:
+        'माफ़ कीजिए, ये नुकसान इस बीमा में नहीं आता। कुछ गड़बड़ लगे तो फसल बीमा helpline पर बात कर लीजिए। धन्यवाद।',
+    },
+    q: {
+      policy_ref: 'अपना mobile नंबर बता दीजिए जो बीमा में दिया था, या फिर policy नंबर।',
+      confirm_identity: 'अच्छा, {village} के {farmer_name} जी के नाम पर policy मिली है। ये आप ही हैं ना?',
+      crop_affected: 'कौन सी फसल खराब हुई है? आपकी policy में {insured_crops} है।',
+      cause_of_loss: 'नुकसान कैसे हुआ? ओले पड़े, बाढ़ आई, बेमौसम बारिश हुई, या जानवरों ने खराब किया?',
+      crop_stage: 'उस वक़्त फसल खेत में खड़ी थी, या काटकर सुखाने रखी थी?',
+      loss_date: 'ये किस दिन हुआ? कल, परसों, या कोई तारीख़ याद हो तो बताइए।',
+      late_reason: '72 घंटे से ज़्यादा हो गए हैं। बताने में देर क्यों हुई, थोड़ा बता दीजिए?',
+      harvest_date: 'फसल की कटाई कब की थी?',
+      affected_area: 'कितनी ज़मीन पर नुकसान हुआ? एकड़ या गुंठा में बता दीजिए। आपका {crop} का खेत {insured_area} एकड़ का है।',
+      loss_percent: 'अंदाज़े से बताइए, कितनी फसल खराब हो गई? आधी, पूरी, या कितने percent?',
+      confirm_sms: 'Claim की जानकारी SMS पर {mobile_last4} वाले नंबर पर भेज दूँ?',
+      final_confirmation: 'एक बार देख लीजिए: {summary}। सब सही है? Claim दर्ज कर दूँ?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'इस नंबर से कोई policy नहीं मिली। एक बार धीरे-धीरे फिर से बोलिए?',
+      R_IDENTITY_DENIED: 'कोई बात नहीं, दूसरा नंबर बताइए।',
+      R_CROP_NOT_INSURED: 'ये फसल आपकी policy में नहीं है जी। Policy में {insured_crops} है।',
+      R_AREA_BASED_CAUSE:
+        'सूखे और कीड़ों का नुकसान पूरे इलाके के लिए एक साथ देखा जाता है, इसके लिए अलग claim नहीं लगता। मैंने आपकी शिकायत लिख ली है।',
+      R_WILD_ANIMAL_ADDON: 'जंगली जानवरों का नुकसान तभी मिलता है जब आपके राज्य ने ये cover लिया हो। मैं दर्ज कर देती हूँ, बीमा कंपनी बता देगी।',
+      R_FUTURE_DATE: 'ये तो आगे की तारीख़ है। असल में किस दिन हुआ था?',
+      R_BEFORE_SOWING: 'ये तारीख़ बुवाई ({sowing_date}) से पहले की है। एक बार दिन फिर से बताइए?',
+      R_LATE_INTIMATION: 'वैसे नुकसान 72 घंटे के अंदर बताना होता है। मैं दर्ज कर रही हूँ, पर कंपनी देरी की वजह पूछ सकती है।',
+      R_POST_HARVEST_WINDOW: 'कटाई के बाद का नुकसान सिर्फ़ 14 दिन तक मिलता है, तो ये इसमें नहीं आएगा। माफ़ कीजिए।',
+      R_AREA_EXCEEDS: 'ये तो आपके {insured_area} एकड़ वाले {crop} के खेत से ज़्यादा है। उसमें कितना खराब हुआ?',
+      R_HIGH_LOSS_PRIORITY: 'नुकसान काफ़ी ज़्यादा है, तो surveyor की visit जल्दी करवा रही हूँ।',
+    },
+  },
+
+  // ───────────────────────── Kannada (spoken, with English loanwords) ─────────────────────────
+  kn: {
+    agent: {
+      greeting:
+        'ನಮಸ್ಕಾರ, ನಾನು DialMind ಇಂದ ವನ್ಯಾ ಮಾತಾಡ್ತಿದೀನಿ. ಬೆಳೆ ಹಾಳಾಯ್ತು ಅಂತ ಕೇಳಿ ತುಂಬಾ ಬೇಜಾರಾಯ್ತು. ಚಿಂತೆ ಮಾಡ್ಬೇಡಿ, ಸ್ವಲ್ಪ ಪ್ರಶ್ನೆ ಕೇಳ್ತೀನಿ, ನಿಮ್ಮ claim ಹಾಕಿಬಿಡ್ತೀನಿ.',
+      closing_filed:
+        'ಆಯ್ತು, ನಿಮ್ಮ claim ಹಾಕಿದೀನಿ. Claim ನಂಬರ್ {claim_id}. SMS ಬರುತ್ತೆ, {surveyor_date} ಒಳಗೆ surveyor ನಿಮ್ಮ ಹೊಲಕ್ಕೆ ಬರ್ತಾರೆ. ಹುಷಾರಾಗಿರಿ.',
+      closing_area_based: 'ನಿಮ್ಮ ದೂರು ಬರ್ಕೊಂಡಿದೀನಿ. ಊರಿನ ಅಂದಾಜು ಮುಗಿದ ತಕ್ಷಣ SMS ಬರುತ್ತೆ. DialMind ಗೆ call ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ.',
+      closing_not_covered: 'ಕ್ಷಮಿಸಿ, ಈ ನಷ್ಟ ಈ ವಿಮೆಲಿ ಬರಲ್ಲ. ಏನಾದ್ರೂ ತಪ್ಪಾಗಿದೆ ಅನ್ಸಿದ್ರೆ ಬೆಳೆ ವಿಮೆ helpline ಗೆ call ಮಾಡಿ. ಧನ್ಯವಾದ.',
+    },
+    q: {
+      policy_ref: 'ವಿಮೆಗೆ ಕೊಟ್ಟಿರೋ mobile ನಂಬರ್ ಹೇಳಿ, ಇಲ್ಲಾಂದ್ರೆ policy ನಂಬರ್ ಹೇಳಿ.',
+      confirm_identity: 'ಸರಿ, {village} ಊರಿನ {farmer_name} ಅವರ ಹೆಸರಲ್ಲಿ policy ಸಿಕ್ತು. ಅದು ನೀವೇನಾ?',
+      crop_affected: 'ಯಾವ ಬೆಳೆ ಹಾಳಾಗಿದೆ? ನಿಮ್ಮ policy ಲಿ {insured_crops} ಇದೆ.',
+      cause_of_loss: 'ಹೇಗೆ ಹಾಳಾಯ್ತು? ಆಲಿಕಲ್ಲು ಮಳೆ, ನೆರೆ, ಅಕಾಲಿಕ ಮಳೆ, ಇಲ್ಲಾ ಪ್ರಾಣಿಗಳು ಹಾಳ್ಮಾಡಿದ್ವಾ?',
+      crop_stage: 'ಆಗ ಬೆಳೆ ಹೊಲದಲ್ಲೇ ನಿಂತಿತ್ತಾ, ಇಲ್ಲಾ ಕಟಾವು ಮಾಡಿ ಒಣಗೋಕೆ ಹಾಕಿದ್ರಾ?',
+      loss_date: 'ಯಾವತ್ತು ಆಯ್ತು? ನಿನ್ನೆ, ಮೊನ್ನೆ, ಇಲ್ಲಾ ದಿನಾಂಕ ನೆನಪಿದ್ರೆ ಹೇಳಿ.',
+      late_reason: '72 ಗಂಟೆ ಮೇಲಾಗಿದೆ. ಹೇಳೋಕೆ ಯಾಕೆ ತಡ ಆಯ್ತು, ಸ್ವಲ್ಪ ಹೇಳಿ?',
+      harvest_date: 'ಕಟಾವು ಯಾವತ್ತು ಮಾಡಿದ್ರಿ?',
+      affected_area: 'ಎಷ್ಟು ಜಮೀನಲ್ಲಿ ಹಾಳಾಗಿದೆ? ಎಕರೆ ಇಲ್ಲಾ ಗುಂಟೆಲಿ ಹೇಳಿ. ನಿಮ್ಮ {crop} ಹೊಲ {insured_area} ಎಕರೆ ಇದೆ.',
+      loss_percent: 'ಅಂದಾಜು ಎಷ್ಟು ಬೆಳೆ ಹೋಯ್ತು? ಅರ್ಧ, ಪೂರ್ತಿ, ಇಲ್ಲಾ ಎಷ್ಟು percent?',
+      confirm_sms: 'Claim ವಿವರ {mobile_last4} ಇಂದ ಮುಗಿಯೋ ನಂಬರ್ಗೆ SMS ಕಳಿಸ್ಲಾ?',
+      final_confirmation: 'ಒಂದ್ಸಲ ನೋಡಿ: {summary}. ಎಲ್ಲಾ ಸರಿ ಇದೆಯಾ? Claim ಹಾಕ್ಲಾ?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'ಈ ನಂಬರ್ಗೆ policy ಸಿಗ್ಲಿಲ್ಲ. ಒಂದ್ಸಲ ನಿಧಾನವಾಗಿ ಮತ್ತೆ ಹೇಳ್ತೀರಾ?',
+      R_IDENTITY_DENIED: 'ಪರವಾಗಿಲ್ಲ, ಬೇರೆ ನಂಬರ್ ಹೇಳಿ.',
+      R_CROP_NOT_INSURED: 'ಆ ಬೆಳೆ ನಿಮ್ಮ policy ಲಿ ಇಲ್ಲ. Policy ಲಿ {insured_crops} ಇದೆ.',
+      R_AREA_BASED_CAUSE: 'ಬರ, ಹುಳದ ನಷ್ಟ ಇಡೀ ಊರಿಗೆ ಒಟ್ಟಿಗೆ ಅಂದಾಜು ಮಾಡ್ತಾರೆ, ಬೇರೆ claim ಬೇಕಿಲ್ಲ. ನಿಮ್ಮ ದೂರು ಬರ್ಕೊಂಡಿದೀನಿ.',
+      R_WILD_ANIMAL_ADDON: 'ಕಾಡುಪ್ರಾಣಿ ನಷ್ಟ ರಾಜ್ಯ ಆ cover ತಗೊಂಡಿದ್ರೆ ಮಾತ್ರ ಸಿಗುತ್ತೆ. ಹಾಕ್ತೀನಿ, ವಿಮೆ company ಹೇಳುತ್ತೆ.',
+      R_FUTURE_DATE: 'ಅದು ಮುಂದಿನ ದಿನಾಂಕ. ನಿಜವಾಗ್ಲೂ ಯಾವತ್ತು ಆಯ್ತು?',
+      R_BEFORE_SOWING: 'ಆ ದಿನಾಂಕ ಬಿತ್ತನೆ ({sowing_date}) ಗಿಂತ ಮುಂಚೆ ಇದೆ. ದಿನ ಮತ್ತೆ ಹೇಳ್ತೀರಾ?',
+      R_LATE_INTIMATION: 'ನಷ್ಟ 72 ಗಂಟೆ ಒಳಗೆ ಹೇಳ್ಬೇಕು. ಹಾಕ್ತೀನಿ, ಆದ್ರೆ company ತಡ ಯಾಕೆ ಅಂತ ಕೇಳ್ಬಹುದು.',
+      R_POST_HARVEST_WINDOW: 'ಕಟಾವಾದ ಮೇಲಿನ ನಷ್ಟ 14 ದಿನದವರೆಗೆ ಮಾತ್ರ ಬರುತ್ತೆ, ಇದು ಬರಲ್ಲ. ಕ್ಷಮಿಸಿ.',
+      R_AREA_EXCEEDS: 'ಅದು ನಿಮ್ಮ {insured_area} ಎಕರೆ {crop} ಹೊಲಕ್ಕಿಂತ ಜಾಸ್ತಿ. ಅದರಲ್ಲಿ ಎಷ್ಟು ಹಾಳಾಯ್ತು?',
+      R_HIGH_LOSS_PRIORITY: 'ನಷ್ಟ ತುಂಬಾ ಜಾಸ್ತಿ ಇದೆ, surveyor ಬೇಗ ಬರೋ ಹಾಗೆ ಮಾಡ್ತೀನಿ.',
+    },
+  },
+
+  // ───────────────────────── Tamil (spoken Tamil) ─────────────────────────
+  ta: {
+    agent: {
+      greeting:
+        'வணக்கம், நான் DialMind-லிருந்து வன்யா பேசறேன். பயிர் சேதமாயிடுச்சுன்னு கேட்டு ரொம்ப வருத்தமா இருக்கு. கவலைப்படாதீங்க, சில கேள்வி கேக்கறேன், உங்க claim-ஐ பதிவு பண்ணிடறேன்.',
+      closing_filed:
+        'முடிஞ்சுது, உங்க claim பதிவாயிடுச்சு. Claim நம்பர் {claim_id}. SMS வரும், {surveyor_date}-க்குள்ள surveyor உங்க வயலுக்கு வருவாங்க. பாத்துக்கோங்க.',
+      closing_area_based: 'உங்க புகாரை பதிவு பண்ணிட்டேன். ஊர் முழுக்க கணக்கெடுப்பு முடிஞ்சதும் SMS வரும். நன்றி.',
+      closing_not_covered: 'மன்னிக்கணும், இந்த சேதம் இந்த காப்பீட்டுல வராது. சந்தேகம் இருந்தா பயிர் காப்பீடு helpline-க்கு call பண்ணுங்க. நன்றி.',
+    },
+    q: {
+      policy_ref: 'காப்பீட்டுல கொடுத்த mobile நம்பர் சொல்லுங்க, இல்லன்னா policy நம்பர் சொல்லுங்க.',
+      confirm_identity: 'சரி, {village} ஊர் {farmer_name} பேர்ல policy இருக்கு. அது நீங்கதானா?',
+      crop_affected: 'எந்த பயிர் சேதமாச்சு? உங்க policy-ல {insured_crops} இருக்கு.',
+      cause_of_loss: 'எப்படி சேதமாச்சு? ஆலங்கட்டி மழை, வெள்ளம், பருவம் தவறின மழை, இல்ல மிருகங்கள் நாசம் பண்ணுச்சா?',
+      crop_stage: 'அப்போ பயிர் வயல்லயே நின்னுச்சா, இல்ல அறுவடை பண்ணி காய வச்சிருந்தீங்களா?',
+      loss_date: 'எந்த நாள் ஆச்சு? நேத்து, முந்தாநாள், இல்ல தேதி ஞாபகம் இருந்தா சொல்லுங்க.',
+      late_reason: '72 மணி நேரத்துக்கு மேல ஆயிடுச்சு. சொல்ல ஏன் லேட் ஆச்சு, கொஞ்சம் சொல்லுங்க?',
+      harvest_date: 'அறுவடை எப்போ பண்ணீங்க?',
+      affected_area: 'எவ்வளவு நிலத்துல சேதம்? ஏக்கர்ல சொல்லுங்க. உங்க {crop} வயல் {insured_area} ஏக்கர்.',
+      loss_percent: 'தோராயமா எவ்வளவு பயிர் போச்சு? பாதி, முழுசா, இல்ல எத்தனை percent?',
+      confirm_sms: 'Claim விவரத்தை {mobile_last4}-ல முடியற நம்பருக்கு SMS அனுப்பட்டுமா?',
+      final_confirmation: 'ஒரு தடவை பாருங்க: {summary}. எல்லாம் சரியா? Claim பதிவு பண்ணட்டுமா?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'இந்த நம்பருக்கு policy கிடைக்கல. மெதுவா இன்னொரு தடவை சொல்றீங்களா?',
+      R_IDENTITY_DENIED: 'பரவாயில்ல, வேற நம்பர் சொல்லுங்க.',
+      R_CROP_NOT_INSURED: 'அந்த பயிர் உங்க policy-ல இல்ல. Policy-ல {insured_crops} இருக்கு.',
+      R_AREA_BASED_CAUSE: 'வறட்சி, பூச்சி சேதத்தை ஊர் முழுக்க சேர்த்துதான் கணக்கெடுப்பாங்க, தனி claim தேவையில்ல. உங்க புகாரை பதிவு பண்ணிட்டேன்.',
+      R_WILD_ANIMAL_ADDON: 'காட்டு மிருக சேதம் மாநிலம் அந்த cover எடுத்திருந்தா தான் கிடைக்கும். பதிவு பண்றேன், company சொல்லுவாங்க.',
+      R_FUTURE_DATE: 'அது வரப்போற தேதி. உண்மையில எந்த நாள் ஆச்சு?',
+      R_BEFORE_SOWING: 'அந்த தேதி விதைப்புக்கு ({sowing_date}) முன்னாடி. நாளை இன்னொரு தடவை சொல்லுங்க?',
+      R_LATE_INTIMATION: 'சேதத்தை 72 மணி நேரத்துக்குள்ள சொல்லணும். பதிவு பண்றேன், ஆனா company லேட்டுக்கு காரணம் கேக்கலாம்.',
+      R_POST_HARVEST_WINDOW: 'அறுவடைக்கு அப்புறம் 14 நாள் வரைக்கும் தான் சேதம் வரும், இது வராது. மன்னிக்கணும்.',
+      R_AREA_EXCEEDS: 'அது உங்க {insured_area} ஏக்கர் {crop} வயலை விட அதிகம். அதுல எவ்வளவு சேதம்?',
+      R_HIGH_LOSS_PRIORITY: 'சேதம் ரொம்ப அதிகம், surveyor சீக்கிரம் வர ஏற்பாடு பண்றேன்.',
+    },
+  },
+
+  // ───────────────────────── Telugu (spoken Telugu) ─────────────────────────
+  te: {
+    agent: {
+      greeting:
+        'నమస్తే, నేను DialMind నుంచి వన్యా మాట్లాడుతున్నాను. పంట పాడైందని విని చాలా బాధగా ఉంది. టెన్షన్ పడకండి, కొన్ని ప్రశ్నలు అడుగుతాను, మీ claim నమోదు చేస్తాను.',
+      closing_filed:
+        'అయిపోయింది, మీ claim నమోదైంది. Claim నంబర్ {claim_id}. SMS వస్తుంది, {surveyor_date} లోపు surveyor మీ పొలానికి వస్తారు. జాగ్రత్తగా ఉండండి.',
+      closing_area_based: 'మీ ఫిర్యాదు నమోదు చేశాను. ఊరి మొత్తం అంచనా అయ్యాక SMS వస్తుంది. ధన్యవాదాలు.',
+      closing_not_covered: 'క్షమించండి, ఈ నష్టం ఈ బీమాలో రాదు. అనుమానం ఉంటే పంట బీమా helpline కి call చేయండి. ధన్యవాదాలు.',
+    },
+    q: {
+      policy_ref: 'బీమాలో ఇచ్చిన mobile నంబర్ చెప్పండి, లేకపోతే policy నంబర్ చెప్పండి.',
+      confirm_identity: 'సరే, {village} ఊరి {farmer_name} గారి పేరు మీద policy దొరికింది. అది మీరేనా?',
+      crop_affected: 'ఏ పంట పాడైంది? మీ policy లో {insured_crops} ఉంది.',
+      cause_of_loss: 'ఎలా పాడైంది? వడగళ్ల వాన, వరద, అకాల వర్షం, లేక జంతువులు పాడు చేశాయా?',
+      crop_stage: 'అప్పుడు పంట పొలంలోనే నిలబడి ఉందా, లేక కోసి ఆరబెట్టారా?',
+      loss_date: 'ఏ రోజు జరిగింది? నిన్న, మొన్న, లేక తేదీ గుర్తుంటే చెప్పండి.',
+      late_reason: '72 గంటలు దాటిపోయింది. చెప్పడానికి ఎందుకు ఆలస్యమైంది, కొంచెం చెప్పండి?',
+      harvest_date: 'కోత ఎప్పుడు చేశారు?',
+      affected_area: 'ఎంత భూమిలో నష్టం జరిగింది? ఎకరాల్లో చెప్పండి. మీ {crop} పొలం {insured_area} ఎకరాలు.',
+      loss_percent: 'సుమారు ఎంత పంట పోయింది? సగం, మొత్తం, లేక ఎన్ని percent?',
+      confirm_sms: 'Claim వివరాలు {mobile_last4} తో ముగిసే నంబర్‌కి SMS పంపనా?',
+      final_confirmation: 'ఒకసారి చూడండి: {summary}. అంతా సరేనా? Claim నమోదు చేయనా?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'ఈ నంబర్‌కి policy దొరకలేదు. నెమ్మదిగా మళ్ళీ చెప్తారా?',
+      R_IDENTITY_DENIED: 'పర్వాలేదు, వేరే నంబర్ చెప్పండి.',
+      R_CROP_NOT_INSURED: 'ఆ పంట మీ policy లో లేదు. Policy లో {insured_crops} ఉంది.',
+      R_AREA_BASED_CAUSE: 'కరువు, పురుగుల నష్టాన్ని ఊరంతా కలిపి అంచనా వేస్తారు, వేరే claim అవసరం లేదు. మీ ఫిర్యాదు నమోదు చేశాను.',
+      R_WILD_ANIMAL_ADDON: 'అడవి జంతువుల నష్టం రాష్ట్రం ఆ cover తీసుకుంటేనే వస్తుంది. నమోదు చేస్తాను, company చెప్తుంది.',
+      R_FUTURE_DATE: 'అది రాబోయే తేదీ. నిజంగా ఏ రోజు జరిగింది?',
+      R_BEFORE_SOWING: 'ఆ తేదీ విత్తనం ({sowing_date}) కంటే ముందుది. రోజు మళ్ళీ చెప్తారా?',
+      R_LATE_INTIMATION: 'నష్టం 72 గంటల లోపు చెప్పాలి. నమోదు చేస్తాను, కానీ company ఆలస్యానికి కారణం అడగొచ్చు.',
+      R_POST_HARVEST_WINDOW: 'కోత తర్వాత నష్టం 14 రోజుల వరకే వస్తుంది, ఇది రాదు. క్షమించండి.',
+      R_AREA_EXCEEDS: 'అది మీ {insured_area} ఎకరాల {crop} పొలం కంటే ఎక్కువ. అందులో ఎంత పాడైంది?',
+      R_HIGH_LOSS_PRIORITY: 'నష్టం చాలా ఎక్కువ, surveyor త్వరగా వచ్చేలా చూస్తాను.',
+    },
+  },
+
+  // ───────────────────────── Bengali (spoken Bangla) ─────────────────────────
+  bn: {
+    agent: {
+      greeting:
+        'নমস্কার, আমি DialMind থেকে বন্যা বলছি। ফসলের ক্ষতি হয়েছে শুনে খুব খারাপ লাগল। চিন্তা করবেন না, কয়েকটা ছোট প্রশ্ন করব, তারপর আপনার claim জমা করে দেব।',
+      closing_filed:
+        'হয়ে গেছে, আপনার claim জমা হয়েছে। Claim নম্বর {claim_id}। SMS আসবে, আর {surveyor_date}-এর মধ্যে surveyor আপনার জমিতে আসবেন। ভালো থাকবেন।',
+      closing_area_based: 'আপনার অভিযোগ লিখে নিয়েছি। পুরো এলাকার হিসেব হলে SMS আসবে। ধন্যবাদ।',
+      closing_not_covered: 'দুঃখিত, এই ক্ষতি এই বিমায় পড়ে না। কিছু ভুল মনে হলে ফসল বিমা helpline-এ call করুন। ধন্যবাদ।',
+    },
+    q: {
+      policy_ref: 'বিমায় যে mobile নম্বর দিয়েছিলেন সেটা বলুন, নয়তো policy নম্বর বলুন।',
+      confirm_identity: 'আচ্ছা, {village} গ্রামের {farmer_name}-এর নামে policy পেয়েছি। এটা আপনিই তো?',
+      crop_affected: 'কোন ফসলটা নষ্ট হয়েছে? আপনার policy-তে {insured_crops} আছে।',
+      cause_of_loss: 'কীভাবে নষ্ট হলো? শিলাবৃষ্টি, বন্যা, অসময়ের বৃষ্টি, নাকি জন্তু-জানোয়ার নষ্ট করেছে?',
+      crop_stage: 'তখন ফসল কি মাঠেই দাঁড়িয়ে ছিল, নাকি কেটে শুকোতে দিয়েছিলেন?',
+      loss_date: 'কবে হয়েছে? কাল, পরশু, নাকি তারিখ মনে থাকলে বলুন।',
+      late_reason: '৭২ ঘণ্টার বেশি হয়ে গেছে। জানাতে দেরি হলো কেন, একটু বলবেন?',
+      harvest_date: 'ফসল কবে কেটেছিলেন?',
+      affected_area: 'কতটা জমিতে ক্ষতি হয়েছে? একর বা বিঘায় বলুন। আপনার {crop}-এর জমি {insured_area} একর।',
+      loss_percent: 'আন্দাজে কতটা ফসল গেছে? অর্ধেক, পুরো, নাকি কত percent?',
+      confirm_sms: 'Claim-এর খবর {mobile_last4} দিয়ে শেষ হওয়া নম্বরে SMS করে দেব?',
+      final_confirmation: 'একবার দেখে নিন: {summary}। সব ঠিক আছে? Claim জমা করে দেব?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'এই নম্বরে কোনো policy পেলাম না। আস্তে আস্তে আরেকবার বলবেন?',
+      R_IDENTITY_DENIED: 'কোনো ব্যাপার না, অন্য নম্বরটা বলুন।',
+      R_CROP_NOT_INSURED: 'এই ফসলটা আপনার policy-তে নেই। Policy-তে {insured_crops} আছে।',
+      R_AREA_BASED_CAUSE: 'খরা আর পোকার ক্ষতি পুরো এলাকা মিলিয়ে হিসেব হয়, আলাদা claim লাগে না। আপনার অভিযোগ লিখে নিয়েছি।',
+      R_WILD_ANIMAL_ADDON: 'বুনো জন্তুর ক্ষতি তখনই পাওয়া যায় যদি রাজ্য ওই cover নিয়ে থাকে। জমা করছি, কোম্পানি জানাবে।',
+      R_FUTURE_DATE: 'এটা তো সামনের তারিখ। আসলে কবে হয়েছিল?',
+      R_BEFORE_SOWING: 'এই তারিখটা বোনার ({sowing_date}) আগের। দিনটা আরেকবার বলবেন?',
+      R_LATE_INTIMATION: 'ক্ষতি ৭২ ঘণ্টার মধ্যে জানাতে হয়। জমা করছি, তবে কোম্পানি দেরির কারণ জিজ্ঞেস করতে পারে।',
+      R_POST_HARVEST_WINDOW: 'কাটার পরে ক্ষতি শুধু ১৪ দিন পর্যন্ত ধরা হয়, এটা পড়বে না। দুঃখিত।',
+      R_AREA_EXCEEDS: 'এটা আপনার {insured_area} একরের {crop}-এর জমির চেয়ে বেশি। তার মধ্যে কতটা নষ্ট হয়েছে?',
+      R_HIGH_LOSS_PRIORITY: 'ক্ষতি অনেক বেশি, তাই surveyor যাতে তাড়াতাড়ি আসেন সেটা দেখছি।',
+    },
+  },
+
+  // ───────────────────────── Gujarati (spoken) ─────────────────────────
+  gu: {
+    agent: {
+      greeting:
+        'નમસ્તે, હું DialMind માંથી વન્યા બોલું છું. પાકનું નુકસાન થયું એ સાંભળીને બહુ દુઃખ થયું. ચિંતા ના કરો, થોડા સવાલ પૂછીશ અને તમારો claim નોંધી દઈશ.',
+      closing_filed:
+        'થઈ ગયું, તમારો claim નોંધાઈ ગયો છે. Claim નંબર {claim_id} છે. SMS આવશે, અને {surveyor_date} સુધીમાં surveyor તમારા ખેતરે આવશે. ધ્યાન રાખજો.',
+      closing_area_based: 'તમારી ફરિયાદ નોંધી લીધી છે. આખા વિસ્તારનો અંદાજ થશે એટલે SMS આવશે. આભાર.',
+      closing_not_covered: 'માફ કરજો, આ નુકસાન આ વીમામાં નથી આવતું. કંઈ ખોટું લાગે તો પાક વીમા helpline પર call કરજો. આભાર.',
+    },
+    q: {
+      policy_ref: 'વીમામાં આપેલો mobile નંબર કહો, નહીં તો policy નંબર કહો.',
+      confirm_identity: 'સારું, {village} ગામના {farmer_name} ના નામે policy મળી છે. એ તમે જ છો ને?',
+      crop_affected: 'કયો પાક બગડ્યો છે? તમારી policy માં {insured_crops} છે.',
+      cause_of_loss: 'નુકસાન કેવી રીતે થયું? કરા પડ્યા, પૂર આવ્યું, કમોસમી વરસાદ, કે જાનવરોએ બગાડ્યું?',
+      crop_stage: 'ત્યારે પાક ખેતરમાં ઊભો હતો, કે કાપીને સૂકવવા મૂક્યો હતો?',
+      loss_date: 'કયા દિવસે થયું? ગઈકાલે, પરમ દિવસે, કે તારીખ યાદ હોય તો કહો.',
+      late_reason: '72 કલાકથી વધારે થઈ ગયા છે. કહેવામાં મોડું કેમ થયું, થોડું કહેશો?',
+      harvest_date: 'પાકની કાપણી ક્યારે કરી હતી?',
+      affected_area: 'કેટલી જમીનમાં નુકસાન થયું? એકર કે વીઘામાં કહો. તમારું {crop} નું ખેતર {insured_area} એકરનું છે.',
+      loss_percent: 'અંદાજે કેટલો પાક ગયો? અડધો, આખો, કે કેટલા percent?',
+      confirm_sms: 'Claim ની માહિતી {mobile_last4} થી પૂરા થતા નંબર પર SMS કરી દઉં?',
+      final_confirmation: 'એક વાર જોઈ લો: {summary}. બધું બરાબર છે? Claim નોંધી દઉં?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'આ નંબરથી કોઈ policy ના મળી. ધીમે ધીમે ફરી એક વાર કહેશો?',
+      R_IDENTITY_DENIED: 'કંઈ વાંધો નહીં, બીજો નંબર કહો.',
+      R_CROP_NOT_INSURED: 'આ પાક તમારી policy માં નથી. Policy માં {insured_crops} છે.',
+      R_AREA_BASED_CAUSE: 'દુષ્કાળ અને જીવાતનું નુકસાન આખા વિસ્તાર માટે ભેગું ગણાય છે, અલગ claim ની જરૂર નથી. તમારી ફરિયાદ નોંધી લીધી છે.',
+      R_WILD_ANIMAL_ADDON: 'જંગલી જાનવરનું નુકસાન રાજ્યએ એ cover લીધું હોય તો જ મળે. નોંધી દઉં છું, કંપની જણાવશે.',
+      R_FUTURE_DATE: 'આ તો આગળની તારીખ છે. ખરેખર કયા દિવસે થયું?',
+      R_BEFORE_SOWING: 'આ તારીખ વાવણી ({sowing_date}) પહેલાંની છે. દિવસ ફરી કહેશો?',
+      R_LATE_INTIMATION: 'નુકસાન 72 કલાકમાં જણાવવું પડે. નોંધી દઉં છું, પણ કંપની મોડું થવાનું કારણ પૂછી શકે.',
+      R_POST_HARVEST_WINDOW: 'કાપણી પછીનું નુકસાન ફક્ત 14 દિવસ સુધી જ મળે, આ નહીં આવે. માફ કરજો.',
+      R_AREA_EXCEEDS: 'આ તો તમારા {insured_area} એકરના {crop} ના ખેતરથી વધારે છે. એમાં કેટલું બગડ્યું?',
+      R_HIGH_LOSS_PRIORITY: 'નુકસાન બહુ વધારે છે, surveyor જલ્દી આવે એવું કરું છું.',
+    },
+  },
+
+  // ───────────────────────── Marathi (spoken) ─────────────────────────
+  mr: {
+    agent: {
+      greeting:
+        'नमस्कार, मी DialMind मधून वन्या बोलतेय. पिकाचं नुकसान झालं हे ऐकून खूप वाईट वाटलं. काळजी करू नका, थोडे प्रश्न विचारते आणि तुमचा claim नोंदवून टाकते.',
+      closing_filed:
+        'झालं, तुमचा claim नोंदवला आहे. Claim नंबर {claim_id}. SMS येईल, आणि {surveyor_date} पर्यंत surveyor तुमच्या शेतावर येतील. काळजी घ्या.',
+      closing_area_based: 'तुमची तक्रार नोंदवली आहे. पूर्ण भागाचा अंदाज झाला की SMS येईल. धन्यवाद.',
+      closing_not_covered: 'माफ करा, हे नुकसान या विम्यात येत नाही. काही चुकीचं वाटलं तर पीक विमा helpline ला call करा. धन्यवाद.',
+    },
+    q: {
+      policy_ref: 'विम्यात दिलेला mobile नंबर सांगा, नाहीतर policy नंबर सांगा.',
+      confirm_identity: 'बरं, {village} गावचे {farmer_name} यांच्या नावावर policy सापडली. ते तुम्हीच ना?',
+      crop_affected: 'कोणतं पीक खराब झालं? तुमच्या policy मध्ये {insured_crops} आहे.',
+      cause_of_loss: 'नुकसान कसं झालं? गारपीट, पूर, अवकाळी पाऊस, की जनावरांनी खराब केलं?',
+      crop_stage: 'तेव्हा पीक शेतात उभं होतं, की कापून वाळवायला ठेवलं होतं?',
+      loss_date: 'कोणत्या दिवशी झालं? काल, परवा, की तारीख आठवत असेल तर सांगा.',
+      late_reason: '72 तासांपेक्षा जास्त झाले. सांगायला उशीर का झाला, जरा सांगाल?',
+      harvest_date: 'पिकाची कापणी कधी केली?',
+      affected_area: 'किती जमिनीवर नुकसान झालं? एकर किंवा गुंठ्यात सांगा. तुमचं {crop} चं शेत {insured_area} एकर आहे.',
+      loss_percent: 'अंदाजे किती पीक गेलं? अर्धं, पूर्ण, की किती percent?',
+      confirm_sms: 'Claim ची माहिती {mobile_last4} ने संपणाऱ्या नंबरवर SMS करू का?',
+      final_confirmation: 'एकदा बघून घ्या: {summary}. सगळं बरोबर आहे? Claim नोंदवू का?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'या नंबरवर policy सापडली नाही. हळू हळू पुन्हा एकदा सांगाल?',
+      R_IDENTITY_DENIED: 'काही हरकत नाही, दुसरा नंबर सांगा.',
+      R_CROP_NOT_INSURED: 'हे पीक तुमच्या policy मध्ये नाही. Policy मध्ये {insured_crops} आहे.',
+      R_AREA_BASED_CAUSE: 'दुष्काळ आणि किडीचं नुकसान पूर्ण भागासाठी एकत्र मोजतात, वेगळा claim लागत नाही. तुमची तक्रार नोंदवली आहे.',
+      R_WILD_ANIMAL_ADDON: 'जंगली जनावरांचं नुकसान राज्याने ते cover घेतलं असेल तरच मिळतं. नोंदवते, कंपनी सांगेल.',
+      R_FUTURE_DATE: 'ही तर पुढची तारीख आहे. खरं तर कोणत्या दिवशी झालं?',
+      R_BEFORE_SOWING: 'ही तारीख पेरणीच्या ({sowing_date}) आधीची आहे. दिवस पुन्हा सांगाल?',
+      R_LATE_INTIMATION: 'नुकसान 72 तासांत सांगावं लागतं. नोंदवते, पण कंपनी उशिराचं कारण विचारू शकते.',
+      R_POST_HARVEST_WINDOW: 'कापणीनंतरचं नुकसान फक्त 14 दिवसांपर्यंत मिळतं, हे येणार नाही. माफ करा.',
+      R_AREA_EXCEEDS: 'हे तर तुमच्या {insured_area} एकरच्या {crop} च्या शेतापेक्षा जास्त आहे. त्यात किती खराब झालं?',
+      R_HIGH_LOSS_PRIORITY: 'नुकसान खूप जास्त आहे, surveyor लवकर येतील असं करते.',
+    },
+  },
+
+  // ───────────────────────── Malayalam (spoken) ─────────────────────────
+  ml: {
+    agent: {
+      greeting:
+        'നമസ്കാരം, ഞാൻ DialMind-ൽ നിന്ന് വന്യയാണ് സംസാരിക്കുന്നത്. കൃഷി നശിച്ചു എന്ന് കേട്ടതിൽ ഒരുപാട് സങ്കടമുണ്ട്. വിഷമിക്കേണ്ട, കുറച്ച് ചോദ്യങ്ങൾ ചോദിക്കാം, നിങ്ങളുടെ claim രജിസ്റ്റർ ചെയ്തു തരാം.',
+      closing_filed:
+        'കഴിഞ്ഞു, നിങ്ങളുടെ claim രജിസ്റ്റർ ആയി. Claim നമ്പർ {claim_id}. SMS വരും, {surveyor_date}-നുള്ളിൽ surveyor നിങ്ങളുടെ വയലിൽ വരും. ശ്രദ്ധിച്ചോളൂ.',
+      closing_area_based: 'നിങ്ങളുടെ പരാതി രേഖപ്പെടുത്തി. പ്രദേശം മുഴുവൻ കണക്കാക്കിയാൽ SMS വരും. നന്ദി.',
+      closing_not_covered: 'ക്ഷമിക്കണം, ഈ നഷ്ടം ഈ ഇൻഷുറൻസിൽ വരില്ല. സംശയമുണ്ടെങ്കിൽ വിള ഇൻഷുറൻസ് helpline-ൽ call ചെയ്യൂ. നന്ദി.',
+    },
+    q: {
+      policy_ref: 'ഇൻഷുറൻസിൽ കൊടുത്ത mobile നമ്പർ പറയൂ, അല്ലെങ്കിൽ policy നമ്പർ പറയൂ.',
+      confirm_identity: 'ശരി, {village}-ലെ {farmer_name}-ന്റെ പേരിൽ policy കിട്ടി. അത് നിങ്ങൾ തന്നെയാണോ?',
+      crop_affected: 'ഏത് വിളയാണ് നശിച്ചത്? നിങ്ങളുടെ policy-യിൽ {insured_crops} ഉണ്ട്.',
+      cause_of_loss: 'എങ്ങനെയാണ് നശിച്ചത്? ആലിപ്പഴം, വെള്ളപ്പൊക്കം, അകാല മഴ, അതോ മൃഗങ്ങൾ നശിപ്പിച്ചോ?',
+      crop_stage: 'അപ്പോൾ വിള പാടത്ത് തന്നെ നിൽക്കുകയായിരുന്നോ, അതോ കൊയ്ത് ഉണങ്ങാൻ ഇട്ടിരുന്നോ?',
+      loss_date: 'ഏത് ദിവസമാണ് സംഭവിച്ചത്? ഇന്നലെ, മിനിഞ്ഞാന്ന്, അതോ തീയതി ഓർമ്മയുണ്ടെങ്കിൽ പറയൂ.',
+      late_reason: '72 മണിക്കൂർ കഴിഞ്ഞു. പറയാൻ എന്താ വൈകിയത്, ഒന്ന് പറയാമോ?',
+      harvest_date: 'കൊയ്ത്ത് എപ്പോഴാണ് നടത്തിയത്?',
+      affected_area: 'എത്ര സ്ഥലത്താണ് നഷ്ടം? ഏക്കറിലോ സെന്റിലോ പറയൂ. നിങ്ങളുടെ {crop} പാടം {insured_area} ഏക്കറാണ്.',
+      loss_percent: 'ഏകദേശം എത്ര വിള പോയി? പകുതി, മുഴുവൻ, അതോ എത്ര percent?',
+      confirm_sms: 'Claim വിവരങ്ങൾ {mobile_last4}-ൽ അവസാനിക്കുന്ന നമ്പറിലേക്ക് SMS അയക്കട്ടേ?',
+      final_confirmation: 'ഒന്ന് നോക്കൂ: {summary}. എല്ലാം ശരിയാണോ? Claim രജിസ്റ്റർ ചെയ്യട്ടേ?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'ഈ നമ്പറിൽ policy കിട്ടിയില്ല. പതുക്കെ ഒന്നുകൂടി പറയാമോ?',
+      R_IDENTITY_DENIED: 'കുഴപ്പമില്ല, വേറെ നമ്പർ പറയൂ.',
+      R_CROP_NOT_INSURED: 'ആ വിള നിങ്ങളുടെ policy-യിൽ ഇല്ല. Policy-യിൽ {insured_crops} ഉണ്ട്.',
+      R_AREA_BASED_CAUSE: 'വരൾച്ചയും കീടനാശവും പ്രദേശം മുഴുവൻ ഒരുമിച്ചാണ് കണക്കാക്കുന്നത്, വേറെ claim വേണ്ട. പരാതി രേഖപ്പെടുത്തി.',
+      R_WILD_ANIMAL_ADDON: 'കാട്ടുമൃഗ നഷ്ടം സംസ്ഥാനം ആ cover എടുത്തിട്ടുണ്ടെങ്കിൽ മാത്രമേ കിട്ടൂ. രേഖപ്പെടുത്താം, company അറിയിക്കും.',
+      R_FUTURE_DATE: 'അത് വരാനിരിക്കുന്ന തീയതിയാണ്. ശരിക്കും ഏത് ദിവസമാണ് സംഭവിച്ചത്?',
+      R_BEFORE_SOWING: 'ആ തീയതി വിതയ്ക്കുന്നതിന് ({sowing_date}) മുമ്പാണ്. ദിവസം ഒന്നുകൂടി പറയാമോ?',
+      R_LATE_INTIMATION: 'നഷ്ടം 72 മണിക്കൂറിനുള്ളിൽ അറിയിക്കണം. രേഖപ്പെടുത്താം, പക്ഷേ company വൈകിയതിന്റെ കാരണം ചോദിച്ചേക്കാം.',
+      R_POST_HARVEST_WINDOW: 'കൊയ്ത്തിന് ശേഷമുള്ള നഷ്ടം 14 ദിവസം വരെ മാത്രമേ കിട്ടൂ, ഇത് വരില്ല. ക്ഷമിക്കണം.',
+      R_AREA_EXCEEDS: 'അത് നിങ്ങളുടെ {insured_area} ഏക്കർ {crop} പാടത്തേക്കാൾ കൂടുതലാണ്. അതിൽ എത്ര നശിച്ചു?',
+      R_HIGH_LOSS_PRIORITY: 'നഷ്ടം വളരെ കൂടുതലാണ്, surveyor വേഗം വരാൻ ഏർപ്പാട് ചെയ്യാം.',
+    },
+  },
+
+  // ───────────────────────── Punjabi (spoken, Gurmukhi) ─────────────────────────
+  pa: {
+    agent: {
+      greeting:
+        'ਸਤ ਸ੍ਰੀ ਅਕਾਲ ਜੀ, ਮੈਂ DialMind ਤੋਂ ਵਨਿਆ ਬੋਲ ਰਹੀ ਹਾਂ। ਫ਼ਸਲ ਦਾ ਨੁਕਸਾਨ ਹੋਇਆ, ਸੁਣ ਕੇ ਬਹੁਤ ਦੁੱਖ ਹੋਇਆ। ਫ਼ਿਕਰ ਨਾ ਕਰੋ, ਕੁਝ ਸਵਾਲ ਪੁੱਛਾਂਗੀ ਤੇ ਤੁਹਾਡਾ claim ਦਰਜ ਕਰ ਦਿਆਂਗੀ।',
+      closing_filed:
+        'ਹੋ ਗਿਆ ਜੀ, ਤੁਹਾਡਾ claim ਦਰਜ ਹੋ ਗਿਆ। Claim ਨੰਬਰ {claim_id} ਹੈ। SMS ਆ ਜਾਵੇਗਾ, ਤੇ {surveyor_date} ਤੱਕ surveyor ਤੁਹਾਡੇ ਖੇਤ ਆ ਜਾਣਗੇ। ਆਪਣਾ ਖ਼ਿਆਲ ਰੱਖਣਾ।',
+      closing_area_based: 'ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰ ਲਈ ਹੈ। ਸਾਰੇ ਇਲਾਕੇ ਦਾ ਅੰਦਾਜ਼ਾ ਹੁੰਦੇ ਹੀ SMS ਆ ਜਾਵੇਗਾ। ਧੰਨਵਾਦ।',
+      closing_not_covered: 'ਮਾਫ਼ ਕਰਨਾ, ਇਹ ਨੁਕਸਾਨ ਇਸ ਬੀਮੇ ਵਿੱਚ ਨਹੀਂ ਆਉਂਦਾ। ਕੁਝ ਗ਼ਲਤ ਲੱਗੇ ਤਾਂ ਫ਼ਸਲ ਬੀਮਾ helpline ਤੇ call ਕਰੋ। ਧੰਨਵਾਦ।',
+    },
+    q: {
+      policy_ref: 'ਬੀਮੇ ਵਿੱਚ ਦਿੱਤਾ mobile ਨੰਬਰ ਦੱਸੋ, ਨਹੀਂ ਤਾਂ policy ਨੰਬਰ ਦੱਸੋ।',
+      confirm_identity: 'ਅੱਛਾ, {village} ਦੇ {farmer_name} ਜੀ ਦੇ ਨਾਂ ਤੇ policy ਮਿਲੀ ਹੈ। ਇਹ ਤੁਸੀਂ ਹੀ ਹੋ ਨਾ?',
+      crop_affected: 'ਕਿਹੜੀ ਫ਼ਸਲ ਖ਼ਰਾਬ ਹੋਈ? ਤੁਹਾਡੀ policy ਵਿੱਚ {insured_crops} ਹੈ।',
+      cause_of_loss: 'ਨੁਕਸਾਨ ਕਿਵੇਂ ਹੋਇਆ? ਗੜੇ ਪਏ, ਹੜ੍ਹ ਆਇਆ, ਬੇਮੌਸਮੀ ਮੀਂਹ, ਜਾਂ ਜਾਨਵਰਾਂ ਨੇ ਖ਼ਰਾਬ ਕੀਤਾ?',
+      crop_stage: 'ਉਸ ਵੇਲੇ ਫ਼ਸਲ ਖੇਤ ਵਿੱਚ ਖੜ੍ਹੀ ਸੀ, ਜਾਂ ਵੱਢ ਕੇ ਸੁਕਾਉਣ ਲਈ ਰੱਖੀ ਸੀ?',
+      loss_date: 'ਕਿਸ ਦਿਨ ਹੋਇਆ? ਕੱਲ੍ਹ, ਪਰਸੋਂ, ਜਾਂ ਤਰੀਕ ਯਾਦ ਹੋਵੇ ਤਾਂ ਦੱਸੋ।',
+      late_reason: '72 ਘੰਟਿਆਂ ਤੋਂ ਵੱਧ ਹੋ ਗਏ ਨੇ। ਦੱਸਣ ਵਿੱਚ ਦੇਰ ਕਿਉਂ ਹੋਈ, ਥੋੜ੍ਹਾ ਦੱਸੋਗੇ?',
+      harvest_date: 'ਫ਼ਸਲ ਦੀ ਵਾਢੀ ਕਦੋਂ ਕੀਤੀ ਸੀ?',
+      affected_area: 'ਕਿੰਨੀ ਜ਼ਮੀਨ ਤੇ ਨੁਕਸਾਨ ਹੋਇਆ? ਏਕੜ ਜਾਂ ਕਿੱਲਿਆਂ ਵਿੱਚ ਦੱਸੋ। ਤੁਹਾਡਾ {crop} ਦਾ ਖੇਤ {insured_area} ਏਕੜ ਦਾ ਹੈ।',
+      loss_percent: 'ਅੰਦਾਜ਼ੇ ਨਾਲ ਕਿੰਨੀ ਫ਼ਸਲ ਗਈ? ਅੱਧੀ, ਪੂਰੀ, ਜਾਂ ਕਿੰਨੇ percent?',
+      confirm_sms: 'Claim ਦੀ ਜਾਣਕਾਰੀ {mobile_last4} ਵਾਲੇ ਨੰਬਰ ਤੇ SMS ਕਰ ਦਿਆਂ?',
+      final_confirmation: 'ਇੱਕ ਵਾਰ ਵੇਖ ਲਓ: {summary}। ਸਭ ਠੀਕ ਹੈ? Claim ਦਰਜ ਕਰ ਦਿਆਂ?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'ਇਸ ਨੰਬਰ ਤੇ ਕੋਈ policy ਨਹੀਂ ਮਿਲੀ। ਹੌਲੀ ਹੌਲੀ ਇੱਕ ਵਾਰ ਫਿਰ ਦੱਸੋਗੇ?',
+      R_IDENTITY_DENIED: 'ਕੋਈ ਗੱਲ ਨਹੀਂ, ਦੂਜਾ ਨੰਬਰ ਦੱਸੋ।',
+      R_CROP_NOT_INSURED: 'ਇਹ ਫ਼ਸਲ ਤੁਹਾਡੀ policy ਵਿੱਚ ਨਹੀਂ ਹੈ। Policy ਵਿੱਚ {insured_crops} ਹੈ।',
+      R_AREA_BASED_CAUSE: 'ਸੋਕੇ ਤੇ ਕੀੜਿਆਂ ਦਾ ਨੁਕਸਾਨ ਸਾਰੇ ਇਲਾਕੇ ਲਈ ਇਕੱਠਾ ਦੇਖਿਆ ਜਾਂਦਾ ਹੈ, ਵੱਖਰਾ claim ਨਹੀਂ ਲੱਗਦਾ। ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਲਿਖ ਲਈ ਹੈ।',
+      R_WILD_ANIMAL_ADDON: 'ਜੰਗਲੀ ਜਾਨਵਰਾਂ ਦਾ ਨੁਕਸਾਨ ਤਾਂ ਹੀ ਮਿਲਦਾ ਹੈ ਜੇ ਸੂਬੇ ਨੇ ਉਹ cover ਲਿਆ ਹੋਵੇ। ਦਰਜ ਕਰ ਦਿੰਦੀ ਹਾਂ, ਕੰਪਨੀ ਦੱਸ ਦੇਵੇਗੀ।',
+      R_FUTURE_DATE: 'ਇਹ ਤਾਂ ਅੱਗੇ ਦੀ ਤਰੀਕ ਹੈ। ਅਸਲ ਵਿੱਚ ਕਿਸ ਦਿਨ ਹੋਇਆ?',
+      R_BEFORE_SOWING: 'ਇਹ ਤਰੀਕ ਬਿਜਾਈ ({sowing_date}) ਤੋਂ ਪਹਿਲਾਂ ਦੀ ਹੈ। ਦਿਨ ਫਿਰ ਦੱਸੋਗੇ?',
+      R_LATE_INTIMATION: 'ਨੁਕਸਾਨ 72 ਘੰਟਿਆਂ ਵਿੱਚ ਦੱਸਣਾ ਪੈਂਦਾ ਹੈ। ਦਰਜ ਕਰ ਰਹੀ ਹਾਂ, ਪਰ ਕੰਪਨੀ ਦੇਰ ਦੀ ਵਜ੍ਹਾ ਪੁੱਛ ਸਕਦੀ ਹੈ।',
+      R_POST_HARVEST_WINDOW: 'ਵਾਢੀ ਤੋਂ ਬਾਅਦ ਦਾ ਨੁਕਸਾਨ ਸਿਰਫ਼ 14 ਦਿਨਾਂ ਤੱਕ ਮਿਲਦਾ ਹੈ, ਇਹ ਨਹੀਂ ਆਵੇਗਾ। ਮਾਫ਼ ਕਰਨਾ।',
+      R_AREA_EXCEEDS: 'ਇਹ ਤਾਂ ਤੁਹਾਡੇ {insured_area} ਏਕੜ ਵਾਲੇ {crop} ਦੇ ਖੇਤ ਤੋਂ ਵੱਧ ਹੈ। ਉਸ ਵਿੱਚ ਕਿੰਨਾ ਖ਼ਰਾਬ ਹੋਇਆ?',
+      R_HIGH_LOSS_PRIORITY: 'ਨੁਕਸਾਨ ਬਹੁਤ ਜ਼ਿਆਦਾ ਹੈ, surveyor ਜਲਦੀ ਆਉਣ ਇਹ ਕਰ ਰਹੀ ਹਾਂ।',
+    },
+  },
+
+  // ───────────────────────── Odia (spoken) ─────────────────────────
+  or: {
+    agent: {
+      greeting:
+        'ନମସ୍କାର, ମୁଁ DialMind ରୁ ବନ୍ୟା କହୁଛି। ଫସଲ ନଷ୍ଟ ହୋଇଛି ଶୁଣି ବହୁତ ଦୁଃଖ ଲାଗିଲା। ଚିନ୍ତା କରନ୍ତୁ ନାହିଁ, କିଛି ପ୍ରଶ୍ନ ପଚାରିବି, ଆପଣଙ୍କ claim ଦାଖଲ କରିଦେବି।',
+      closing_filed:
+        'ହୋଇଗଲା, ଆପଣଙ୍କ claim ଦାଖଲ ହୋଇଗଲା। Claim ନମ୍ବର {claim_id}। SMS ଆସିବ, ଆଉ {surveyor_date} ଭିତରେ surveyor ଆପଣଙ୍କ ଜମିକୁ ଆସିବେ। ଭଲରେ ରୁହନ୍ତୁ।',
+      closing_area_based: 'ଆପଣଙ୍କ ଅଭିଯୋଗ ଲେଖିନେଲି। ପୁରା ଅଞ୍ଚଳର ଆକଳନ ହେଲେ SMS ଆସିବ। ଧନ୍ୟବାଦ।',
+      closing_not_covered: 'କ୍ଷମା କରିବେ, ଏହି କ୍ଷତି ଏହି ବୀମାରେ ଆସେ ନାହିଁ। କିଛି ଭୁଲ ଲାଗିଲେ ଫସଲ ବୀମା helpline କୁ call କରନ୍ତୁ। ଧନ୍ୟବାଦ।',
+    },
+    q: {
+      policy_ref: 'ବୀମାରେ ଦେଇଥିବା mobile ନମ୍ବର କୁହନ୍ତୁ, ନହେଲେ policy ନମ୍ବର କୁହନ୍ତୁ।',
+      confirm_identity: 'ଆଚ୍ଛା, {village} ର {farmer_name} ଙ୍କ ନାଁରେ policy ମିଳିଲା। ଏହା ଆପଣ ତ?',
+      crop_affected: 'କେଉଁ ଫସଲ ନଷ୍ଟ ହୋଇଛି? ଆପଣଙ୍କ policy ରେ {insured_crops} ଅଛି।',
+      cause_of_loss: 'କେମିତି ନଷ୍ଟ ହେଲା? କୁଆପଥର, ବନ୍ୟା, ଅସମୟ ବର୍ଷା, ନା ଜନ୍ତୁ ନଷ୍ଟ କଲେ?',
+      crop_stage: 'ସେତେବେଳେ ଫସଲ ବିଲରେ ଠିଆ ଥିଲା, ନା କାଟି ଶୁଖାଇବାକୁ ରଖିଥିଲେ?',
+      loss_date: 'କେଉଁ ଦିନ ହେଲା? କାଲି, ପଅରଦିନ, ନା ତାରିଖ ମନେ ଥିଲେ କୁହନ୍ତୁ।',
+      late_reason: '72 ଘଣ୍ଟାରୁ ବେଶି ହୋଇଗଲାଣି। ଜଣାଇବାରେ ଡେରି କାହିଁକି ହେଲା, ଟିକେ କହିବେ?',
+      harvest_date: 'ଫସଲ କେବେ କାଟିଥିଲେ?',
+      affected_area: 'କେତେ ଜମିରେ କ୍ଷତି ହୋଇଛି? ଏକରରେ କୁହନ୍ତୁ। ଆପଣଙ୍କ {crop} ବିଲ {insured_area} ଏକର।',
+      loss_percent: 'ପାଖାପାଖି କେତେ ଫସଲ ଗଲା? ଅଧା, ପୁରା, ନା କେତେ percent?',
+      confirm_sms: 'Claim ର ଖବର {mobile_last4} ରେ ଶେଷ ହେଉଥିବା ନମ୍ବରକୁ SMS କରିଦେବି?',
+      final_confirmation: 'ଥରେ ଦେଖିନିଅନ୍ତୁ: {summary}। ସବୁ ଠିକ୍ ଅଛି? Claim ଦାଖଲ କରିଦେବି?',
+    },
+    r: {
+      R_POLICY_NOT_FOUND: 'ଏହି ନମ୍ବରରେ policy ମିଳିଲା ନାହିଁ। ଧୀରେ ଧୀରେ ଆଉ ଥରେ କହିବେ?',
+      R_IDENTITY_DENIED: 'କିଛି କଥା ନାହିଁ, ଅନ୍ୟ ନମ୍ବର କୁହନ୍ତୁ।',
+      R_CROP_NOT_INSURED: 'ସେହି ଫସଲ ଆପଣଙ୍କ policy ରେ ନାହିଁ। Policy ରେ {insured_crops} ଅଛି।',
+      R_AREA_BASED_CAUSE: 'ମରୁଡ଼ି ଆଉ ପୋକ କ୍ଷତି ପୁରା ଅଞ୍ଚଳ ମିଶାଇ ଆକଳନ ହୁଏ, ଅଲଗା claim ଦରକାର ନାହିଁ। ଆପଣଙ୍କ ଅଭିଯୋଗ ଲେଖିନେଲି।',
+      R_WILD_ANIMAL_ADDON: 'ବଣୁଆ ଜନ୍ତୁ କ୍ଷତି ରାଜ୍ୟ ସେହି cover ନେଇଥିଲେ ହିଁ ମିଳେ। ଦାଖଲ କରୁଛି, କମ୍ପାନୀ ଜଣାଇବ।',
+      R_FUTURE_DATE: 'ଏହା ତ ଆଗାମୀ ତାରିଖ। ସତରେ କେଉଁ ଦିନ ହୋଇଥିଲା?',
+      R_BEFORE_SOWING: 'ଏହି ତାରିଖ ବୁଣିବା ({sowing_date}) ପୂର୍ବରୁ। ଦିନଟି ଆଉ ଥରେ କହିବେ?',
+      R_LATE_INTIMATION: 'କ୍ଷତି 72 ଘଣ୍ଟା ଭିତରେ ଜଣାଇବାକୁ ହୁଏ। ଦାଖଲ କରୁଛି, କିନ୍ତୁ କମ୍ପାନୀ ଡେରିର କାରଣ ପଚାରିପାରେ।',
+      R_POST_HARVEST_WINDOW: 'କାଟିବା ପରର କ୍ଷତି କେବଳ 14 ଦିନ ପର୍ଯ୍ୟନ୍ତ ମିଳେ, ଏହା ଆସିବ ନାହିଁ। କ୍ଷମା କରିବେ।',
+      R_AREA_EXCEEDS: 'ଏହା ଆପଣଙ୍କ {insured_area} ଏକର {crop} ବିଲଠାରୁ ବେଶି। ସେଥିରେ କେତେ ନଷ୍ଟ ହେଲା?',
+      R_HIGH_LOSS_PRIORITY: 'କ୍ଷତି ବହୁତ ବେଶି, surveyor ଶୀଘ୍ର ଆସିବା ପାଇଁ ବ୍ୟବସ୍ଥା କରୁଛି।',
+    },
+  },
+};
+
+// Option labels per language (crops, causes, crop stage). Keys: '<question>:<value>'.
+export const OPTION_LABELS = {
+  hi: { paddy: 'धान', ragi: 'रागी', maize: 'मक्का', tur: 'अरहर', cotton: 'कपास', groundnut: 'मूंगफली', jowar: 'ज्वार', soybean: 'सोयाबीन',
+    hailstorm: 'ओले', inundation: 'बाढ़ / पानी भराव', landslide: 'भूस्खलन', cloudburst: 'बादल फटना', natural_fire: 'आग', unseasonal_rain: 'बेमौसम बारिश', cyclone: 'तूफ़ान', drought: 'सूखा', pest_disease: 'कीड़े / रोग', wild_animal: 'जंगली जानवर',
+    standing: 'खेत में खड़ी', harvested_drying: 'काटकर सूख रही थी' },
+  kn: { paddy: 'ಭತ್ತ', ragi: 'ರಾಗಿ', maize: 'ಮೆಕ್ಕೆಜೋಳ', tur: 'ತೊಗರಿ', cotton: 'ಹತ್ತಿ', groundnut: 'ಶೇಂಗಾ', jowar: 'ಜೋಳ', soybean: 'ಸೋಯಾ',
+    hailstorm: 'ಆಲಿಕಲ್ಲು ಮಳೆ', inundation: 'ನೆರೆ / ನೀರು ನಿಂತಿದ್ದು', landslide: 'ಭೂಕುಸಿತ', cloudburst: 'ಮೇಘಸ್ಫೋಟ', natural_fire: 'ಬೆಂಕಿ', unseasonal_rain: 'ಅಕಾಲಿಕ ಮಳೆ', cyclone: 'ಬಿರುಗಾಳಿ', drought: 'ಬರ', pest_disease: 'ಹುಳ / ರೋಗ', wild_animal: 'ಕಾಡುಪ್ರಾಣಿ',
+    standing: 'ಹೊಲದಲ್ಲೇ ನಿಂತಿತ್ತು', harvested_drying: 'ಕಟಾವು ಮಾಡಿ ಒಣಗ್ತಿತ್ತು' },
+  ta: { paddy: 'நெல்', ragi: 'கேழ்வரகு', maize: 'மக்காச்சோளம்', tur: 'துவரை', cotton: 'பருத்தி', groundnut: 'நிலக்கடலை', jowar: 'சோளம்', soybean: 'சோயா',
+    hailstorm: 'ஆலங்கட்டி மழை', inundation: 'வெள்ளம்', landslide: 'நிலச்சரிவு', cloudburst: 'மேக வெடிப்பு', natural_fire: 'தீ', unseasonal_rain: 'பருவம் தவறிய மழை', cyclone: 'புயல்', drought: 'வறட்சி', pest_disease: 'பூச்சி / நோய்', wild_animal: 'காட்டு மிருகம்',
+    standing: 'வயல்ல நின்னுச்சு', harvested_drying: 'அறுத்து காய வச்சது' },
+  te: { paddy: 'వరి', ragi: 'రాగి', maize: 'మొక్కజొన్న', tur: 'కంది', cotton: 'పత్తి', groundnut: 'వేరుశనగ', jowar: 'జొన్న', soybean: 'సోయా',
+    hailstorm: 'వడగళ్ళు', inundation: 'వరద', landslide: 'కొండచరియలు', cloudburst: 'కుంభవృష్టి', natural_fire: 'అగ్ని', unseasonal_rain: 'అకాల వర్షం', cyclone: 'తుఫాన్', drought: 'కరువు', pest_disease: 'పురుగు / తెగులు', wild_animal: 'అడవి జంతువులు',
+    standing: 'పొలంలో నిలబడి ఉంది', harvested_drying: 'కోసి ఆరబెట్టారు' },
+  bn: { paddy: 'ধান', ragi: 'রাগি', maize: 'ভুট্টা', tur: 'অড়হর', cotton: 'তুলো', groundnut: 'চিনাবাদাম', jowar: 'জোয়ার', soybean: 'সয়াবিন',
+    hailstorm: 'শিলাবৃষ্টি', inundation: 'বন্যা', landslide: 'ধস', cloudburst: 'মেঘভাঙা বৃষ্টি', natural_fire: 'আগুন', unseasonal_rain: 'অসময়ের বৃষ্টি', cyclone: 'ঘূর্ণিঝড়', drought: 'খরা', pest_disease: 'পোকা / রোগ', wild_animal: 'বুনো জন্তু',
+    standing: 'মাঠে দাঁড়িয়ে ছিল', harvested_drying: 'কেটে শুকোচ্ছিল' },
+  gu: { paddy: 'ડાંગર', ragi: 'નાગલી', maize: 'મકાઈ', tur: 'તુવેર', cotton: 'કપાસ', groundnut: 'મગફળી', jowar: 'જુવાર', soybean: 'સોયાબીન',
+    hailstorm: 'કરા', inundation: 'પૂર', landslide: 'ભૂસ્ખલન', cloudburst: 'વાદળ ફાટવું', natural_fire: 'આગ', unseasonal_rain: 'કમોસમી વરસાદ', cyclone: 'વાવાઝોડું', drought: 'દુષ્કાળ', pest_disease: 'જીવાત / રોગ', wild_animal: 'જંગલી જાનવર',
+    standing: 'ખેતરમાં ઊભો હતો', harvested_drying: 'કાપીને સૂકવતા હતા' },
+  mr: { paddy: 'भात', ragi: 'नाचणी', maize: 'मका', tur: 'तूर', cotton: 'कापूस', groundnut: 'भुईमूग', jowar: 'ज्वारी', soybean: 'सोयाबीन',
+    hailstorm: 'गारपीट', inundation: 'पूर', landslide: 'दरड', cloudburst: 'ढगफुटी', natural_fire: 'आग', unseasonal_rain: 'अवकाळी पाऊस', cyclone: 'वादळ', drought: 'दुष्काळ', pest_disease: 'कीड / रोग', wild_animal: 'जंगली जनावरं',
+    standing: 'शेतात उभं होतं', harvested_drying: 'कापून वाळत होतं' },
+  ml: { paddy: 'നെല്ല്', ragi: 'റാഗി', maize: 'ചോളം', tur: 'തുവര', cotton: 'പരുത്തി', groundnut: 'നിലക്കടല', jowar: 'മണിച്ചോളം', soybean: 'സോയ',
+    hailstorm: 'ആലിപ്പഴം', inundation: 'വെള്ളപ്പൊക്കം', landslide: 'ഉരുൾപൊട്ടൽ', cloudburst: 'മേഘവിസ്ഫോടനം', natural_fire: 'തീ', unseasonal_rain: 'അകാല മഴ', cyclone: 'ചുഴലിക്കാറ്റ്', drought: 'വരൾച്ച', pest_disease: 'കീടം / രോഗം', wild_animal: 'കാട്ടുമൃഗം',
+    standing: 'പാടത്ത് നിന്നിരുന്നു', harvested_drying: 'കൊയ്ത് ഉണക്കുകയായിരുന്നു' },
+  pa: { paddy: 'ਝੋਨਾ', ragi: 'ਰਾਗੀ', maize: 'ਮੱਕੀ', tur: 'ਅਰਹਰ', cotton: 'ਨਰਮਾ / ਕਪਾਹ', groundnut: 'ਮੂੰਗਫਲੀ', jowar: 'ਜਵਾਰ', soybean: 'ਸੋਇਆਬੀਨ',
+    hailstorm: 'ਗੜੇ', inundation: 'ਹੜ੍ਹ', landslide: 'ਜ਼ਮੀਨ ਖਿਸਕਣਾ', cloudburst: 'ਬੱਦਲ ਫਟਣਾ', natural_fire: 'ਅੱਗ', unseasonal_rain: 'ਬੇਮੌਸਮੀ ਮੀਂਹ', cyclone: 'ਤੂਫ਼ਾਨ', drought: 'ਸੋਕਾ', pest_disease: 'ਕੀੜੇ / ਬਿਮਾਰੀ', wild_animal: 'ਜੰਗਲੀ ਜਾਨਵਰ',
+    standing: 'ਖੇਤ ਵਿੱਚ ਖੜ੍ਹੀ ਸੀ', harvested_drying: 'ਵੱਢ ਕੇ ਸੁੱਕ ਰਹੀ ਸੀ' },
+  or: { paddy: 'ଧାନ', ragi: 'ମାଣ୍ଡିଆ', maize: 'ମକା', tur: 'ହରଡ଼', cotton: 'କପା', groundnut: 'ଚିନାବାଦାମ', jowar: 'ଜୁଆର', soybean: 'ସୋୟାବିନ',
+    hailstorm: 'କୁଆପଥର', inundation: 'ବନ୍ୟା', landslide: 'ଭୂସ୍ଖଳନ', cloudburst: 'ମେଘଫଟା ବର୍ଷା', natural_fire: 'ନିଆଁ', unseasonal_rain: 'ଅସମୟ ବର୍ଷା', cyclone: 'ବାତ୍ୟା', drought: 'ମରୁଡ଼ି', pest_disease: 'ପୋକ / ରୋଗ', wild_animal: 'ବଣୁଆ ଜନ୍ତୁ',
+    standing: 'ବିଲରେ ଠିଆ ଥିଲା', harvested_drying: 'କାଟି ଶୁଖୁଥିଲା' },
+};
+
+// Extra synonyms per language (native script + common romanised forms) for matching.
+export const SYNONYMS = {
+  ta: { paddy: 'நெல்|நெல்லு|அரிசி|nel|nellu', ragi: 'கேழ்வரகு|ராகி|kezhvaragu', maize: 'மக்காச்சோளம்|சோளம்|makka cholam', tur: 'துவரை|thuvarai', cotton: 'பருத்தி|paruthi', groundnut: 'நிலக்கடலை|கடலை|kadalai|verkadalai', jowar: 'சோளம்|cholam', soybean: 'சோயா',
+    hailstorm: 'ஆலங்கட்டி|ஆலங்கட்டி மழை|alangatti', inundation: 'வெள்ளம்|தண்ணி தேங்கி|vellam', landslide: 'நிலச்சரிவு', cloudburst: 'மேக வெடிப்பு', natural_fire: 'தீ|நெருப்பு|மின்னல்|neruppu', unseasonal_rain: 'மழை|பெரிய மழை|அடை மழை|பருவம் தவறிய மழை|mazhai', cyclone: 'புயல்|சூறாவளி|puyal', drought: 'வறட்சி|மழை இல்ல|varatchi', pest_disease: 'பூச்சி|நோய்|பூச்சி தாக்குதல்|poochi', wild_animal: 'யானை|பன்றி|காட்டு பன்றி|மிருகம்|yaanai',
+    standing: 'வயல்ல|நின்னுச்சு|நின்றது|நிக்குது', harvested_drying: 'அறுவடை|அறுத்து|காய வச்சு|காய வைத்து' },
+  te: { paddy: 'వరి|వడ్లు|vari|vadlu', ragi: 'రాగి|రాగులు', maize: 'మొక్కజొన్న|mokkajonna', tur: 'కంది|kandi', cotton: 'పత్తి|patti', groundnut: 'వేరుశనగ|పల్లీలు|verusenaga|palli', jowar: 'జొన్న|jonna', soybean: 'సోయా',
+    hailstorm: 'వడగళ్ళు|వడగళ్ల వాన|vadagallu', inundation: 'వరద|నీళ్ళు నిలిచాయి|varada', landslide: 'కొండచరియలు', cloudburst: 'కుంభవృష్టి', natural_fire: 'అగ్ని|మంటలు|పిడుగు|mantalu', unseasonal_rain: 'వర్షం|వాన|భారీ వర్షం|అకాల వర్షం|varsham|vaana', cyclone: 'తుఫాన్|తుఫాను|tufan', drought: 'కరువు|వాన లేదు|karuvu', pest_disease: 'పురుగు|తెగులు|purugu', wild_animal: 'ఏనుగు|అడవి పంది|పంది|జంతువులు|enugu',
+    standing: 'పొలంలో|నిలబడి|నిల్చుంది', harvested_drying: 'కోసి|కోత|ఆరబెట్టాం|ఆరబెట్టారు' },
+  bn: { paddy: 'ধান|চাল|dhan', ragi: 'রাগি', maize: 'ভুট্টা|bhutta', tur: 'অড়হর|arhar', cotton: 'তুলো|তুলা|tulo', groundnut: 'চিনাবাদাম|বাদাম|badam', jowar: 'জোয়ার', soybean: 'সয়াবিন',
+    hailstorm: 'শিলাবৃষ্টি|শিল|shil', inundation: 'বন্যা|জল জমে|bonna', landslide: 'ধস', cloudburst: 'মেঘভাঙা', natural_fire: 'আগুন|বাজ|agun', unseasonal_rain: 'বৃষ্টি|অকাল বৃষ্টি|অসময়ের বৃষ্টি|বেশি বৃষ্টি|brishti', cyclone: 'ঘূর্ণিঝড়|ঝড়|jhor', drought: 'খরা|বৃষ্টি হয়নি|khora', pest_disease: 'পোকা|রোগ|poka', wild_animal: 'হাতি|শুয়োর|বুনো|জন্তু|hati',
+    standing: 'মাঠে|দাঁড়িয়ে', harvested_drying: 'কেটে|কাটা|শুকোতে|শুকোচ্ছিল' },
+  gu: { paddy: 'ડાંગર|ચોખા|dangar', ragi: 'નાગલી|રાગી', maize: 'મકાઈ|makai', tur: 'તુવેર|tuver', cotton: 'કપાસ|kapas', groundnut: 'મગફળી|સીંગ|magfali|sing', jowar: 'જુવાર|juvar', soybean: 'સોયાબીન',
+    hailstorm: 'કરા|karā|kara', inundation: 'પૂર|પાણી ભરાયું|pur', landslide: 'ભૂસ્ખલન', cloudburst: 'વાદળ ફાટવું', natural_fire: 'આગ|વીજળી|aag', unseasonal_rain: 'વરસાદ|કમોસમી વરસાદ|માવઠું|mavthu|varsad', cyclone: 'વાવાઝોડું|vavazodu', drought: 'દુષ્કાળ|વરસાદ નથી|dushkal', pest_disease: 'જીવાત|રોગ|jivat', wild_animal: 'ભૂંડ|રોઝ|નીલગાય|જાનવર|bhund',
+    standing: 'ખેતરમાં|ઊભો', harvested_drying: 'કાપીને|કાપણી|સૂકવવા|સૂકવતા' },
+  mr: { paddy: 'भात|धान|bhat', ragi: 'नाचणी|nachni', maize: 'मका|maka', tur: 'तूर|tur', cotton: 'कापूस|kapus', groundnut: 'भुईमूग|शेंगदाणे|bhuimug', jowar: 'ज्वारी|jowari', soybean: 'सोयाबीन',
+    hailstorm: 'गारपीट|गारा|garpit', inundation: 'पूर|पाणी साचलं|pur', landslide: 'दरड', cloudburst: 'ढगफुटी', natural_fire: 'आग|वीज', unseasonal_rain: 'पाऊस|अवकाळी|अवकाळी पाऊस|avkali|paus', cyclone: 'वादळ|vadal', drought: 'दुष्काळ|पाऊस नाही|dushkal', pest_disease: 'कीड|रोग|alis|अळी', wild_animal: 'रानडुक्कर|हत्ती|जनावरं|randukkar',
+    standing: 'शेतात|उभं', harvested_drying: 'कापून|कापणी|वाळवायला|वाळत' },
+  ml: { paddy: 'നെല്ല്|നെല്ലു|nellu', ragi: 'റാഗി|മുത്താറി', maize: 'ചോളം|cholam', tur: 'തുവര', cotton: 'പരുത്തി', groundnut: 'നിലക്കടല|കപ്പലണ്ടി|kappalandi', jowar: 'മണിച്ചോളം', soybean: 'സോയ',
+    hailstorm: 'ആലിപ്പഴം', inundation: 'വെള്ളപ്പൊക്കം|വെള്ളം കയറി|vellam', landslide: 'ഉരുൾപൊട്ടൽ|മണ്ണിടിച്ചിൽ', cloudburst: 'മേഘവിസ്ഫോടനം', natural_fire: 'തീ|ഇടിമിന്നൽ|thee', unseasonal_rain: 'മഴ|അകാല മഴ|പെരുമഴ|mazha', cyclone: 'ചുഴലിക്കാറ്റ്|കാറ്റ്', drought: 'വരൾച്ച|മഴയില്ല', pest_disease: 'കീടം|രോഗം|പുഴു', wild_animal: 'ആന|കാട്ടുപന്നി|പന്നി|aana|panni',
+    standing: 'പാടത്ത്|നിന്നിരുന്നു', harvested_drying: 'കൊയ്ത്|കൊയ്തു|ഉണക്കാൻ|ഉണക്കുക' },
+  pa: { paddy: 'ਝੋਨਾ|ਚੌਲ|jhona', ragi: 'ਰਾਗੀ', maize: 'ਮੱਕੀ|makki', tur: 'ਅਰਹਰ', cotton: 'ਨਰਮਾ|ਕਪਾਹ|narma|kapah', groundnut: 'ਮੂੰਗਫਲੀ', jowar: 'ਜਵਾਰ', soybean: 'ਸੋਇਆਬੀਨ',
+    hailstorm: 'ਗੜੇ|ਗੜੇਮਾਰੀ|gade', inundation: 'ਹੜ੍ਹ|ਪਾਣੀ ਭਰ ਗਿਆ|harh', landslide: 'ਜ਼ਮੀਨ ਖਿਸਕਣਾ', cloudburst: 'ਬੱਦਲ ਫਟਣਾ', natural_fire: 'ਅੱਗ|ਬਿਜਲੀ|agg', unseasonal_rain: 'ਮੀਂਹ|ਬੇਮੌਸਮੀ ਮੀਂਹ|ਬਾਰਿਸ਼|meenh', cyclone: 'ਤੂਫ਼ਾਨ|ਹਨੇਰੀ|haneri', drought: 'ਸੋਕਾ|ਮੀਂਹ ਨਹੀਂ ਪਿਆ|soka', pest_disease: 'ਕੀੜੇ|ਸੁੰਡੀ|ਬਿਮਾਰੀ|sundi', wild_animal: 'ਸੂਰ|ਨੀਲਗਾਂ|ਜਾਨਵਰ|ਆਵਾਰਾ ਪਸ਼ੂ',
+    standing: 'ਖੇਤ ਵਿੱਚ|ਖੜ੍ਹੀ', harvested_drying: 'ਵੱਢ|ਵਾਢੀ|ਸੁਕਾਉਣ|ਸੁੱਕ' },
+  or: { paddy: 'ଧାନ|ଚାଉଳ|dhana', ragi: 'ମାଣ୍ଡିଆ|mandia', maize: 'ମକା|maka', tur: 'ହରଡ଼|harada', cotton: 'କପା|kapa', groundnut: 'ଚିନାବାଦାମ|badam', jowar: 'ଜୁଆର', soybean: 'ସୋୟାବିନ',
+    hailstorm: 'କୁଆପଥର|kuapathara', inundation: 'ବନ୍ୟା|ପାଣି ଜମିଲା|banya', landslide: 'ଭୂସ୍ଖଳନ', cloudburst: 'ମେଘଫଟା', natural_fire: 'ନିଆଁ|ବିଜୁଳି|nian', unseasonal_rain: 'ବର୍ଷା|ଅସମୟ ବର୍ଷା|barsha', cyclone: 'ବାତ୍ୟା|ଝଡ଼|batya', drought: 'ମରୁଡ଼ି|ବର୍ଷା ନାହିଁ|marudi', pest_disease: 'ପୋକ|ରୋଗ|poka', wild_animal: 'ହାତୀ|ଘୁଷୁରି|ଜନ୍ତୁ|hati',
+    standing: 'ବିଲରେ|ଠିଆ', harvested_drying: 'କାଟି|କଟା|ଶୁଖାଇ|ଶୁଖୁଥିଲା' },
+};
+
+// Lexicon additions per language: yes / no words, relative days, numbers, units, percent words.
+export const LEXICON = {
+  hi: { yes: ['हाँ जी', 'जी हाँ', 'सही है', 'ठीक है', 'हाँ', 'bilkul', 'kar do', 'कर दो', 'कर दीजिए'], no: ['नहीं जी', 'ना', 'गलत'] },
+  kn: { yes: ['ಹೌದು', 'ಹೂಂ', 'ಸರಿ', 'ಆಯ್ತು', 'ಹಾಕಿ', 'hoon', 'aytu', 'haaki'], no: ['ಇಲ್ಲ', 'ಬೇಡ', 'ಅಲ್ಲ', 'tappu'] },
+  ta: { yes: ['ஆமா', 'ஆமாம்', 'சரி', 'ஆம்', 'பண்ணுங்க', 'anuppunga', 'அனுப்புங்க', 'aama', 'sari'], no: ['இல்ல', 'இல்லை', 'வேண்டாம்', 'தப்பு', 'illa', 'vendam'],
+    days: { 'இன்னைக்கு': 0, 'இன்று': 0, 'நேத்து': -1, 'நேற்று': -1, 'முந்தாநாள்': -2, nethu: -1 },
+    nums: { 'ஒன்று': 1, 'ஒண்ணு': 1, 'ரெண்டு': 2, 'இரண்டு': 2, 'மூணு': 3, 'மூன்று': 3, 'நாலு': 4, 'அஞ்சு': 5, 'ஐந்து': 5, 'ஆறு': 6, 'ஏழு': 7, 'எட்டு': 8, 'ஒன்பது': 9, 'பத்து': 10, 'பாதி': 0.5, 'அரை': 0.5 },
+    units: { 'ஏக்கர்': 1, 'ஹெக்டேர்': 2.471, 'சென்ட்': 0.01 }, pct: { 'பாதி': 50, 'முழுசா': 100, 'முழுவதும்': 100, 'எல்லாம்': 100 } },
+  te: { yes: ['అవును', 'సరే', 'ఔను', 'చేయండి', 'పంపండి', 'avunu', 'sare'], no: ['కాదు', 'లేదు', 'వద్దు', 'తప్పు', 'kaadu', 'vaddu'],
+    days: { 'ఈరోజు': 0, 'ఇవాళ': 0, 'నిన్న': -1, 'మొన్న': -2, ninna: -1, monna: -2 },
+    nums: { 'ఒకటి': 1, 'ఒక': 1, 'రెండు': 2, 'మూడు': 3, 'నాలుగు': 4, 'ఐదు': 5, 'ఆరు': 6, 'ఏడు': 7, 'ఎనిమిది': 8, 'తొమ్మిది': 9, 'పది': 10, 'సగం': 0.5, 'అర': 0.5 },
+    units: { 'ఎకరం': 1, 'ఎకరాలు': 1, 'ఎకరా': 1, 'హెక్టారు': 2.471, 'సెంట్లు': 0.01, 'గుంటలు': 0.025 }, pct: { 'సగం': 50, 'మొత్తం': 100, 'అంతా': 100, 'పూర్తిగా': 100 } },
+  bn: { yes: ['হ্যাঁ', 'হ্যা', 'ঠিক আছে', 'আচ্ছা', 'করুন', 'করে দিন', 'hyan', 'thik ache'], no: ['না', 'নাহ', 'ভুল', 'চাই না'],
+    days: { 'আজ': 0, 'কাল': -1, 'গতকাল': -1, 'পরশু': -2 },
+    nums: { 'এক': 1, 'দুই': 2, 'দু': 2, 'তিন': 3, 'চার': 4, 'পাঁচ': 5, 'ছয়': 6, 'সাত': 7, 'আট': 8, 'নয়': 9, 'দশ': 10, 'আধা': 0.5, 'আড়াই': 2.5, 'দেড়': 1.5 },
+    units: { 'একর': 1, 'বিঘা': 0.33, 'কাঠা': 0.0165, 'হেক্টর': 2.471 }, pct: { 'অর্ধেক': 50, 'পুরো': 100, 'সব': 100, 'পুরোটাই': 100 } },
+  gu: { yes: ['હા', 'હાજી', 'બરાબર', 'સાચું', 'કરી દો', 'મોકલો', 'ha', 'barabar'], no: ['ના', 'નહીં', 'ખોટું', 'nahi'],
+    days: { 'આજે': 0, 'ગઈકાલે': -1, 'કાલે': -1, 'પરમ દિવસે': -2 },
+    nums: { 'એક': 1, 'બે': 2, 'ત્રણ': 3, 'ચાર': 4, 'પાંચ': 5, 'છ': 6, 'સાત': 7, 'આઠ': 8, 'નવ': 9, 'દસ': 10, 'અડધો': 0.5, 'અડધું': 0.5, 'અઢી': 2.5, 'દોઢ': 1.5 },
+    units: { 'એકર': 1, 'વીઘા': 0.4, 'હેક્ટર': 2.471, 'ગુંઠા': 0.025 }, pct: { 'અડધો': 50, 'આખો': 100, 'બધો': 100, 'પૂરો': 100 } },
+  mr: { yes: ['हो', 'होय', 'बरोबर', 'चालेल', 'करा', 'पाठवा', 'ho', 'hoy'], no: ['नाही', 'नको', 'चूक', 'nahi', 'nako'],
+    days: { 'आज': 0, 'काल': -1, 'परवा': -2, kal: -1, parva: -2 },
+    nums: { 'एक': 1, 'दोन': 2, 'तीन': 3, 'चार': 4, 'पाच': 5, 'सहा': 6, 'सात': 7, 'आठ': 8, 'नऊ': 9, 'दहा': 10, 'अर्धा': 0.5, 'अडीच': 2.5, 'दीड': 1.5 },
+    units: { 'एकर': 1, 'गुंठे': 0.025, 'गुंठा': 0.025, 'हेक्टर': 2.471 }, pct: { 'अर्धं': 50, 'अर्धे': 50, 'पूर्ण': 100, 'सगळं': 100 } },
+  ml: { yes: ['അതെ', 'ശരി', 'ഉവ്വ്', 'ആം', 'ചെയ്തോളൂ', 'അയച്ചോളൂ', 'athe', 'sheri'], no: ['ഇല്ല', 'വേണ്ട', 'അല്ല', 'തെറ്റാണ്', 'illa', 'venda'],
+    days: { 'ഇന്ന്': 0, 'ഇന്നലെ': -1, 'മിനിഞ്ഞാന്ന്': -2 },
+    nums: { 'ഒന്ന്': 1, 'രണ്ട്': 2, 'മൂന്ന്': 3, 'നാല്': 4, 'അഞ്ച്': 5, 'ആറ്': 6, 'ഏഴ്': 7, 'എട്ട്': 8, 'ഒമ്പത്': 9, 'പത്ത്': 10, 'പകുതി': 0.5, 'അര': 0.5 },
+    units: { 'ഏക്കർ': 1, 'സെന്റ്': 0.01, 'ഹെക്ടർ': 2.471 }, pct: { 'പകുതി': 50, 'മുഴുവൻ': 100, 'മൊത്തം': 100 } },
+  pa: { yes: ['ਹਾਂ', 'ਹਾਂ ਜੀ', 'ਜੀ', 'ਠੀਕ ਹੈ', 'ਕਰ ਦਿਓ', 'ਭੇਜ ਦਿਓ', 'haan ji'], no: ['ਨਹੀਂ', 'ਨਾ', 'ਗ਼ਲਤ', 'nahin'],
+    days: { 'ਅੱਜ': 0, 'ਕੱਲ੍ਹ': -1, 'ਪਰਸੋਂ': -2 },
+    nums: { 'ਇੱਕ': 1, 'ਦੋ': 2, 'ਤਿੰਨ': 3, 'ਚਾਰ': 4, 'ਪੰਜ': 5, 'ਛੇ': 6, 'ਸੱਤ': 7, 'ਅੱਠ': 8, 'ਨੌਂ': 9, 'ਦਸ': 10, 'ਅੱਧਾ': 0.5, 'ਢਾਈ': 2.5, 'ਡੇਢ': 1.5 },
+    units: { 'ਏਕੜ': 1, 'ਕਿੱਲਾ': 1, 'ਕਿੱਲੇ': 1, 'ਕਿੱਲਿਆਂ': 1, 'ਕਨਾਲ': 0.125, 'ਮਰਲੇ': 0.00625, killa: 1, kille: 1 }, pct: { 'ਅੱਧੀ': 50, 'ਅੱਧਾ': 50, 'ਪੂਰੀ': 100, 'ਸਾਰੀ': 100 } },
+  or: { yes: ['ହଁ', 'ହଁ ଜୀ', 'ଠିକ୍ ଅଛି', 'କରିଦିଅ', 'ପଠାଅ', 'han'], no: ['ନା', 'ନାହିଁ', 'ଭୁଲ', 'na'],
+    days: { 'ଆଜି': 0, 'କାଲି': -1, 'ପଅରଦିନ': -2 },
+    nums: { 'ଏକ': 1, 'ଦୁଇ': 2, 'ତିନି': 3, 'ଚାରି': 4, 'ପାଞ୍ଚ': 5, 'ଛଅ': 6, 'ସାତ': 7, 'ଆଠ': 8, 'ନଅ': 9, 'ଦଶ': 10, 'ଅଧା': 0.5, 'ଅଢ଼େଇ': 2.5, 'ଦେଢ଼': 1.5 },
+    units: { 'ଏକର': 1, 'ଗୁଣ୍ଠ': 0.025, 'ହେକ୍ଟର': 2.471 }, pct: { 'ଅଧା': 50, 'ପୁରା': 100, 'ସବୁ': 100 } },
+};

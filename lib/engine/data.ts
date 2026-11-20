@@ -21,6 +21,8 @@ export interface Question {
   required: number;
   ask_if: string | null;
   max_retries: number;
+  /** Colloquial wording per language (from `translations`). */
+  texts: Partial<Record<LanguageCode, string>>;
 }
 
 export interface QuestionOption {
@@ -31,6 +33,7 @@ export interface QuestionOption {
   label_kn: string;
   synonyms: string[];
   meta: Record<string, unknown> | null;
+  labels: Partial<Record<LanguageCode, string>>;
 }
 
 export interface Rule {
@@ -42,6 +45,7 @@ export interface Rule {
   message_en: string;
   message_hi: string;
   message_kn: string;
+  messages: Partial<Record<LanguageCode, string>>;
 }
 
 export interface InterviewData {
@@ -54,7 +58,7 @@ export interface InterviewData {
   percentWords: Map<string, number>;
   yesWords: Set<string>;
   noWords: Set<string>;
-  texts: Map<string, Record<LanguageCode, string>>;
+  texts: Map<string, Partial<Record<LanguageCode, string>>>;
 }
 
 const CACHE_MS = 60_000;
@@ -73,13 +77,27 @@ const g = globalThis as typeof globalThis & {
 };
 
 async function load(): Promise<InterviewData> {
-  const [questions, optionRows, ruleRows, lexicon, textRows] = await Promise.all([
+  const [questions, optionRows, ruleRows, lexicon, textRows, translationRows, synonymRows] = await Promise.all([
     queryAll<Question>('SELECT * FROM questions ORDER BY seq'),
     queryAll<Record<string, unknown>>('SELECT * FROM question_options ORDER BY id'),
     queryAll<Record<string, unknown>>('SELECT * FROM rules'),
     queryAll<{ term: string; kind: string; value: number }>('SELECT term, kind, value FROM lexicon'),
     queryAll<{ key: string; text_en: string; text_hi: string; text_kn: string }>('SELECT * FROM agent_texts'),
+    queryAll<{ kind: string; ref: string; lang: string; text: string }>('SELECT kind, ref, lang, text FROM translations'),
+    queryAll<{ question_code: string; value: string; synonyms: string }>('SELECT question_code, value, synonyms FROM option_synonyms'),
   ]);
+
+  // kind|ref → { lang: text }
+  const tr = new Map<string, Partial<Record<LanguageCode, string>>>();
+  for (const row of translationRows) {
+    const key = `${row.kind}|${row.ref}`;
+    tr.set(key, { ...(tr.get(key) ?? {}), [row.lang]: row.text });
+  }
+  const extraSynonyms = new Map<string, string[]>();
+  for (const row of synonymRows) {
+    const key = `${row.question_code}:${row.value}`;
+    extraSynonyms.set(key, [...(extraSynonyms.get(key) ?? []), ...row.synonyms.split('|')]);
+  }
 
   const options: QuestionOption[] = optionRows.map((r) => ({
     question_code: String(r.question_code),
@@ -87,11 +105,20 @@ async function load(): Promise<InterviewData> {
     label_en: String(r.label_en),
     label_hi: String(r.label_hi),
     label_kn: String(r.label_kn),
-    synonyms: String(r.synonyms)
-      .split('|')
+    // Base synonyms plus every language's synonyms: farmers mix languages freely.
+    synonyms: [
+      ...String(r.synonyms).split('|'),
+      ...(extraSynonyms.get(`${r.question_code}:${r.value}`) ?? []),
+    ]
       .map((s) => s.trim().toLowerCase())
       .filter(Boolean),
     meta: r.meta ? (JSON.parse(String(r.meta)) as Record<string, unknown>) : null,
+    labels: {
+      en: String(r.label_en),
+      hi: String(r.label_hi),
+      kn: String(r.label_kn),
+      ...tr.get(`option|${r.question_code}:${r.value}`),
+    },
   }));
 
   const rules: Rule[] = ruleRows.map((r) => ({
@@ -103,6 +130,12 @@ async function load(): Promise<InterviewData> {
     message_en: String(r.message_en),
     message_hi: String(r.message_hi),
     message_kn: String(r.message_kn),
+    messages: {
+      en: String(r.message_en),
+      hi: String(r.message_hi),
+      kn: String(r.message_kn),
+      ...tr.get(`rule|${r.code}`),
+    },
   }));
 
   const byKind = (kind: string) =>
@@ -116,6 +149,7 @@ async function load(): Promise<InterviewData> {
       max_retries: Number(q.max_retries),
       min_value: q.min_value === null ? null : Number(q.min_value),
       max_value: q.max_value === null ? null : Number(q.max_value),
+      texts: { en: q.text_en, hi: q.text_hi, kn: q.text_kn, ...tr.get(`question|${q.code}`) },
     })),
     options,
     rules,
@@ -126,7 +160,7 @@ async function load(): Promise<InterviewData> {
     yesWords: new Set(byKind('yes').keys()),
     noWords: new Set(byKind('no').keys()),
     texts: new Map(
-      textRows.map((t) => [t.key, { en: t.text_en, hi: t.text_hi, kn: t.text_kn } as Record<LanguageCode, string>]),
+      textRows.map((t) => [t.key, { en: t.text_en, hi: t.text_hi, kn: t.text_kn, ...tr.get(`agent|${t.key}`) }]),
     ),
   };
 }
@@ -143,13 +177,19 @@ export function getInterviewData(): Promise<InterviewData> {
 }
 
 export function questionText(q: Question, lang: LanguageCode): string {
-  return lang === 'hi' ? q.text_hi : lang === 'kn' ? q.text_kn : q.text_en;
+  return q.texts[lang] ?? q.text_en;
 }
 
 export function optionLabel(o: QuestionOption, lang: LanguageCode): string {
-  return lang === 'hi' ? o.label_hi : lang === 'kn' ? o.label_kn : o.label_en;
+  return o.labels[lang] ?? o.label_en;
 }
 
 export function ruleMessage(r: Rule, lang: LanguageCode): string {
-  return lang === 'hi' ? r.message_hi : lang === 'kn' ? r.message_kn : r.message_en;
+  return r.messages[lang] ?? r.message_en;
+}
+
+/** A fixed agent line (greeting, closings) in the given language, falling back to English. */
+export function agentText(data: InterviewData, key: string, lang: LanguageCode): string {
+  const t = data.texts.get(key);
+  return t?.[lang] ?? t?.en ?? '';
 }

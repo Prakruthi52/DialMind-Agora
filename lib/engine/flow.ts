@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { queryAll, queryOne, run } from '@/lib/db';
-import type { LanguageCode } from '@/lib/vanya';
+import { LANGUAGES, type LanguageCode } from '@/lib/vanya';
 import {
+  agentText,
   getInterviewData,
   optionLabel,
   questionText,
@@ -74,12 +75,28 @@ interface Ctx {
   firedRules: Set<string>;
 }
 
-const ACRES: Record<LanguageCode, string> = { en: 'acres', hi: 'एकड़', kn: 'ಎಕರೆ' };
+const ACRES: Record<LanguageCode, string> = {
+  en: 'acres', hi: 'एकड़', kn: 'ಎಕರೆ', ta: 'ஏக்கர்', te: 'ఎకరాలు', bn: 'একর',
+  gu: 'એકર', mr: 'एकर', ml: 'ഏക്കർ', pa: 'ਏਕੜ', or: 'ଏକର',
+};
 const YES_NO: Record<LanguageCode, Record<string, string>> = {
   en: { yes: 'yes', no: 'no' },
   hi: { yes: 'हाँ', no: 'नहीं' },
   kn: { yes: 'ಹೌದು', no: 'ಇಲ್ಲ' },
+  ta: { yes: 'ஆமா', no: 'இல்ல' },
+  te: { yes: 'అవును', no: 'కాదు' },
+  bn: { yes: 'হ্যাঁ', no: 'না' },
+  gu: { yes: 'હા', no: 'ના' },
+  mr: { yes: 'हो', no: 'नाही' },
+  ml: { yes: 'അതെ', no: 'ഇല്ല' },
+  pa: { yes: 'ਹਾਂ', no: 'ਨਹੀਂ' },
+  or: { yes: 'ହଁ', no: 'ନା' },
 };
+
+/** Locale for dates: every supported language has an Indian Intl locale. */
+export function intlLocale(lang: LanguageCode): string {
+  return `${lang}-IN`;
+}
 
 // ───────────────────────── session lifecycle ─────────────────────────
 
@@ -211,7 +228,7 @@ function labelFor(ctx: Ctx, code: string, value: string): string {
 }
 
 function formatDate(iso: string, lang: LanguageCode): string {
-  const locale = lang === 'hi' ? 'hi-IN' : lang === 'kn' ? 'kn-IN' : 'en-IN';
+  const locale = intlLocale(lang);
   try {
     return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(
       new Date(`${iso}T00:00:00Z`),
@@ -284,8 +301,8 @@ function askPayload(ctx: Ctx, q: Question) {
 }
 
 function textFor(ctx: Ctx, key: string, extra: Record<string, string> = {}): string {
-  const t = ctx.data.texts.get(key);
-  return t ? fill(t[ctx.session.language], ctx, extra) : '';
+  const text = agentText(ctx.data, key, ctx.session.language);
+  return text ? fill(text, ctx, extra) : '';
 }
 
 async function setCurrent(sessionId: string, code: string | null, status?: string) {
@@ -595,7 +612,7 @@ export async function setLanguage(sessionId: string, language: LanguageCode): Pr
   const q = nextQuestion(ctx);
   return {
     result: 'question',
-    instruction: `Language switched. Continue in ${language === 'hi' ? 'Hindi' : language === 'kn' ? 'Kannada' : 'English'}.`,
+    instruction: `Language switched. Continue in ${LANGUAGES[language].englishName}.`,
     ...(q ? askPayload(ctx, q) : {}),
   };
 }

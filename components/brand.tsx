@@ -92,17 +92,32 @@ export function FieldScape({ className = '' }: { className?: string }) {
   );
 }
 
-export const LANGUAGE_OPTIONS: {
+type LanguageOption = {
   code: LanguageCode;
   native: string;
   english: string;
-  sample: string;
-}[] = [
-  { code: 'hi', native: 'हिन्दी', english: 'Hindi', sample: 'नमस्ते' },
-  { code: 'kn', native: 'ಕನ್ನಡ', english: 'Kannada', sample: 'ನಮಸ್ಕಾರ' },
-  { code: 'en', native: 'English', english: 'English', sample: 'Hello' },
+  /** Needs Sarvam speech recognition (only shown when NEXT_PUBLIC_SARVAM_ENABLED=true). */
+  sarvam?: boolean;
+};
+
+const ALL_LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'en', native: 'English', english: 'English' },
+  { code: 'hi', native: 'हिन्दी', english: 'Hindi' },
+  { code: 'kn', native: 'ಕನ್ನಡ', english: 'Kannada' },
+  { code: 'ta', native: 'தமிழ்', english: 'Tamil' },
+  { code: 'te', native: 'తెలుగు', english: 'Telugu' },
+  { code: 'bn', native: 'বাংলা', english: 'Bengali' },
+  { code: 'gu', native: 'ગુજરાતી', english: 'Gujarati' },
+  { code: 'mr', native: 'मराठी', english: 'Marathi', sarvam: true },
+  { code: 'ml', native: 'മലയാളം', english: 'Malayalam', sarvam: true },
+  { code: 'pa', native: 'ਪੰਜਾਬੀ', english: 'Punjabi', sarvam: true },
+  { code: 'or', native: 'ଓଡ଼ିଆ', english: 'Odia', sarvam: true },
 ];
 
+export const LANGUAGE_OPTIONS = ALL_LANGUAGE_OPTIONS.filter(
+  (l) => !l.sarvam || process.env.NEXT_PUBLIC_SARVAM_ENABLED === 'true',
+);
+
 export function languageLabel(code: LanguageCode): string {
-  return LANGUAGE_OPTIONS.find((l) => l.code === code)?.native ?? code;
+  return ALL_LANGUAGE_OPTIONS.find((l) => l.code === code)?.native ?? code;
 }

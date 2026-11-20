@@ -34,6 +34,27 @@ CREATE TABLE IF NOT EXISTS agent_texts (
   text_kn         TEXT NOT NULL
 );
 
+-- Colloquial wording in every supported language. One row per (kind, ref, lang):
+--   kind 'question' → ref = questions.code        kind 'rule'   → ref = rules.code
+--   kind 'option'   → ref = '<question>:<value>'   kind 'agent'  → ref = agent_texts.key
+-- English stays in the base tables; the text_hi / text_kn columns there are legacy fallbacks.
+CREATE TABLE IF NOT EXISTS translations (
+  kind            TEXT NOT NULL CHECK (kind IN ('question','rule','option','agent')),
+  ref             TEXT NOT NULL,
+  lang            TEXT NOT NULL,
+  text            TEXT NOT NULL,
+  PRIMARY KEY (kind, ref, lang)
+);
+
+-- Extra synonyms per language (native script and romanised), merged with question_options.synonyms.
+CREATE TABLE IF NOT EXISTS option_synonyms (
+  question_code   TEXT NOT NULL,
+  value           TEXT NOT NULL,
+  lang            TEXT NOT NULL,
+  synonyms        TEXT NOT NULL,             -- '|' separated, lowercase
+  PRIMARY KEY (question_code, value, lang)
+);
+
 -- Allowed values for enum questions, with multilingual / code-mixed synonyms
 -- used by the exact and fuzzy matchers.
 CREATE TABLE IF NOT EXISTS question_options (

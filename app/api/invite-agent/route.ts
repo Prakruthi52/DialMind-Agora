@@ -5,6 +5,7 @@ import {
   AnamAvatar,
   Area,
   AresSTT,
+  SarvamSTT,
   ExpiresIn,
   generateConvoAIToken,
   MurfTTS,
@@ -12,9 +13,10 @@ import {
 } from 'agora-agents';
 import { ClientStartRequest, AgentResponse } from '@/types/conversation';
 import { DEFAULT_AGENT_UID, DEFAULT_AVATAR_UID } from '@/lib/agora';
-import { LANGUAGES, buildVanyaPrompt, isLanguageCode } from '@/lib/vanya';
+import { LANGUAGES, buildVanyaPrompt, isLanguageCode, type LanguageCode } from '@/lib/vanya';
 import { isAvatarEnabled, waitForAvatarWarmup } from '@/lib/avatar-warmup';
 import { attachAgent, createSession, getCurrentQuestion } from '@/lib/engine/flow';
+import { agentText, getInterviewData } from '@/lib/engine/data';
 import { buildTools } from '@/lib/tools';
 
 // agentUid identifies the AI in the RTC channel and shares its default with the client.
@@ -23,6 +25,21 @@ const avatarUid = String(DEFAULT_AVATAR_UID);
 
 // Murf Falcon output rate. Anam accepts 16/24/48 kHz; both sides must match.
 const TTS_SAMPLE_RATE = 24000;
+
+// Spoken while the LLM recovers from an error.
+const WAIT_LINES: Record<LanguageCode, string> = {
+  en: 'One moment please.',
+  hi: 'एक मिनट रुकिए जी।',
+  kn: 'ಒಂದ್ ನಿಮಿಷ ಇರಿ.',
+  ta: 'ஒரு நிமிஷம் இருங்க.',
+  te: 'ఒక్క నిమిషం ఆగండి.',
+  bn: 'এক মিনিট দাঁড়ান।',
+  gu: 'એક મિનિટ રાહ જુઓ.',
+  mr: 'एक मिनिट थांबा.',
+  ml: 'ഒരു മിനിറ്റ് നിൽക്കൂ.',
+  pa: 'ਇੱਕ ਮਿੰਟ ਰੁਕੋ ਜੀ।',
+  or: 'ଟିକେ ରୁହନ୍ତୁ।',
+};
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -36,7 +53,9 @@ export async function POST(request: NextRequest) {
 
     const body: ClientStartRequest = await request.json();
     const { requester_id, channel_name } = body;
-    const language = LANGUAGES[isLanguageCode(body.language) ? body.language : 'hi'];
+    const requested = LANGUAGES[isLanguageCode(body.language) ? body.language : 'hi'];
+    const language =
+      requested.stt === 'sarvam' && !process.env.NEXT_SARVAM_API_KEY ? LANGUAGES.en : requested;
     const farmerName =
       typeof body.farmer_name === 'string' ? body.farmer_name.trim().slice(0, 60) : undefined;
 
@@ -82,13 +101,9 @@ export async function POST(request: NextRequest) {
     // The greeting ends with the first question from the database, so the farmer can answer
     // straight away (Vanya then continues through the tools).
     const firstQuestion = toolsEnabled ? (await getCurrentQuestion(sessionId)).ask : undefined;
-    const greeting = firstQuestion ? `${language.greeting} ${firstQuestion}` : language.greeting;
-    const failureMessage =
-      language.code === 'hi'
-        ? 'एक पल रुकिए।'
-        : language.code === 'kn'
-          ? 'ಒಂದು ಕ್ಷಣ ಕಾಯಿರಿ.'
-          : 'Please wait a moment.';
+    const baseGreeting = agentText(await getInterviewData(), 'greeting', language.code);
+    const greeting = firstQuestion ? `${baseGreeting} ${firstQuestion}` : baseGreeting;
+    const failureMessage = WAIT_LINES[language.code];
 
     // Pipeline: Agora ARES (managed) STT → OpenAI gpt-4o-mini (Agora-managed) LLM
     // → Murf Falcon (BYOK) TTS → optional Anam avatar (BYOK) video.
@@ -135,12 +150,19 @@ export async function POST(request: NextRequest) {
         enable_metrics: true,
       },
     })
-      // Agora ARES speech recognition (Agora-managed, runs inside Agora; no external ASR hop).
-      // Code-mixed speech (Hinglish) is recognised under the hi-IN model.
+      // Speech recognition: Agora ARES (managed) where it supports the language; Sarvam
+      // (BYOK) for Marathi, Malayalam, Punjabi and Odia. Code-mixed speech is recognised
+      // under the selected language's model.
       .withStt(
-        new AresSTT({
-          keywords: ['Fasal Bima', 'PMFBY', 'DialMind', 'Vanya', 'acre', 'gunta', 'claim', 'policy'],
-        }),
+        language.stt === 'sarvam'
+          ? new SarvamSTT({
+              apiKey: requireEnv('NEXT_SARVAM_API_KEY'),
+              language: language.sarvamLanguage!,
+              model: process.env.NEXT_SARVAM_STT_MODEL ?? 'saarika:v2.5',
+            })
+          : new AresSTT({
+              keywords: ['Fasal Bima', 'PMFBY', 'DialMind', 'Vanya', 'acre', 'gunta', 'claim', 'policy'],
+            }),
       )
       .withLlm(
         new OpenAI({

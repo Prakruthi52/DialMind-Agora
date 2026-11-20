@@ -1,53 +1,47 @@
 // Vanya (DialMind) persona, languages and prompt.
-// Greetings mirror `agent_texts.greeting` in db/seed.sql. Once the DB layer is in,
-// they are read from the database and this file only keeps the fallbacks.
+// All spoken wording (greeting, questions, closings) lives in the database
+// (agent_texts + translations); this file only describes each language's voice/STT setup.
 
-export type LanguageCode = 'hi' | 'kn' | 'en';
+export type LanguageCode = 'en' | 'hi' | 'kn' | 'ta' | 'te' | 'bn' | 'gu' | 'mr' | 'ml' | 'pa' | 'or';
 
 export interface LanguageConfig {
   code: LanguageCode;
   /** Name shown in the UI, in its own script. */
   nativeName: string;
   englishName: string;
-  /** BCP-47 locale for Murf TTS (voice hi-IN-poonam supports all three). */
+  /** BCP-47 locale for Murf TTS (voice hi-IN-poonam speaks all of these). */
   murfLocale: string;
-  /** BCP-47 language for Agora ARES speech recognition. */
-  asrLanguage: 'hi-IN' | 'kn-IN' | 'en-IN';
-  greeting: string;
+  /**
+   * Speech recognition. 'ares' = Agora ARES (managed, no key). 'sarvam' = Sarvam STT
+   * (needs NEXT_SARVAM_API_KEY) for languages ARES does not cover.
+   */
+  stt: 'ares' | 'sarvam';
+  /** ARES / turn-detection language. Sarvam languages use en-IN for turn detection only. */
+  asrLanguage: 'hi-IN' | 'kn-IN' | 'ta-IN' | 'te-IN' | 'bn-IN' | 'gu-IN' | 'en-IN';
+  /** Sarvam language code (Odia is od-IN in Sarvam). */
+  sarvamLanguage?: string;
 }
 
+const L = (c: LanguageConfig) => c;
+
 export const LANGUAGES: Record<LanguageCode, LanguageConfig> = {
-  hi: {
-    code: 'hi',
-    nativeName: 'हिन्दी',
-    englishName: 'Hindi',
-    murfLocale: 'hi-IN',
-    asrLanguage: 'hi-IN',
-    greeting:
-      'नमस्ते, मैं DialMind से वान्या बोल रही हूँ। आपकी फसल के नुकसान के बारे में सुनकर दुख हुआ। आपका फसल बीमा क्लेम दर्ज करने के लिए मैं आपसे कुछ सवाल पूछूँगी।',
-  },
-  kn: {
-    code: 'kn',
-    nativeName: 'ಕನ್ನಡ',
-    englishName: 'Kannada',
-    murfLocale: 'kn-IN',
-    asrLanguage: 'kn-IN',
-    greeting:
-      'ನಮಸ್ಕಾರ, ನಾನು DialMind ನಿಂದ ವನ್ಯಾ. ನಿಮ್ಮ ಬೆಳೆ ಹಾನಿಯ ಬಗ್ಗೆ ಕೇಳಿ ಬೇಸರವಾಯಿತು. ನಿಮ್ಮ ಬೆಳೆ ವಿಮೆ ಕ್ಲೈಮ್ ದಾಖಲಿಸಲು ನಾನು ಕೆಲವು ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳುತ್ತೇನೆ.',
-  },
-  en: {
-    code: 'en',
-    nativeName: 'English',
-    englishName: 'English',
-    murfLocale: 'en-IN',
-    asrLanguage: 'en-IN',
-    greeting:
-      'Hello, I am Vanya from DialMind. I am sorry to hear about your crop damage. I will ask you a few questions to register your crop insurance claim.',
-  },
+  en: L({ code: 'en', nativeName: 'English', englishName: 'English', murfLocale: 'en-IN', stt: 'ares', asrLanguage: 'en-IN' }),
+  hi: L({ code: 'hi', nativeName: 'हिन्दी', englishName: 'Hindi', murfLocale: 'hi-IN', stt: 'ares', asrLanguage: 'hi-IN' }),
+  kn: L({ code: 'kn', nativeName: 'ಕನ್ನಡ', englishName: 'Kannada', murfLocale: 'kn-IN', stt: 'ares', asrLanguage: 'kn-IN' }),
+  ta: L({ code: 'ta', nativeName: 'தமிழ்', englishName: 'Tamil', murfLocale: 'ta-IN', stt: 'ares', asrLanguage: 'ta-IN' }),
+  te: L({ code: 'te', nativeName: 'తెలుగు', englishName: 'Telugu', murfLocale: 'te-IN', stt: 'ares', asrLanguage: 'te-IN' }),
+  bn: L({ code: 'bn', nativeName: 'বাংলা', englishName: 'Bengali', murfLocale: 'bn-IN', stt: 'ares', asrLanguage: 'bn-IN' }),
+  gu: L({ code: 'gu', nativeName: 'ગુજરાતી', englishName: 'Gujarati', murfLocale: 'gu-IN', stt: 'ares', asrLanguage: 'gu-IN' }),
+  mr: L({ code: 'mr', nativeName: 'मराठी', englishName: 'Marathi', murfLocale: 'mr-IN', stt: 'sarvam', asrLanguage: 'en-IN', sarvamLanguage: 'mr-IN' }),
+  ml: L({ code: 'ml', nativeName: 'മലയാളം', englishName: 'Malayalam', murfLocale: 'ml-IN', stt: 'sarvam', asrLanguage: 'en-IN', sarvamLanguage: 'ml-IN' }),
+  pa: L({ code: 'pa', nativeName: 'ਪੰਜਾਬੀ', englishName: 'Punjabi', murfLocale: 'pa-IN', stt: 'sarvam', asrLanguage: 'en-IN', sarvamLanguage: 'pa-IN' }),
+  or: L({ code: 'or', nativeName: 'ଓଡ଼ିଆ', englishName: 'Odia', murfLocale: 'or-IN', stt: 'sarvam', asrLanguage: 'en-IN', sarvamLanguage: 'od-IN' }),
 };
 
+export const LANGUAGE_CODES = Object.keys(LANGUAGES) as LanguageCode[];
+
 export function isLanguageCode(value: unknown): value is LanguageCode {
-  return value === 'hi' || value === 'kn' || value === 'en';
+  return typeof value === 'string' && value in LANGUAGES;
 }
 
 export function buildVanyaPrompt(language: LanguageConfig, farmerName?: string): string {
@@ -56,7 +50,8 @@ export function buildVanyaPrompt(language: LanguageConfig, farmerName?: string):
 If asked who you are, say you are Vanya from DialMind, an AI assistant for crop insurance claims. ${caller}
 
 LANGUAGE
-- Speak in ${language.englishName}. If the farmer switches language (Hindi, Kannada, English or a mix like Hinglish), reply in the language they used and call setLanguage.
+- Speak in ${language.englishName}. If the farmer switches to another Indian language or a mix (like Hinglish), reply in the language they used and call setLanguage.
+- Talk the way people really talk in villages, not textbook language: warm, everyday words, and the English words farmers commonly use (mobile, policy, claim, SMS, acre, percent). Use respectful forms (ji, gaaru, avare, etc.) naturally.
 - Use simple, everyday village-level words, never formal or bureaucratic language.
 - Keep every reply to one or two short sentences. Ask exactly one question per turn.
 - Say numbers, dates and claim numbers slowly and clearly.

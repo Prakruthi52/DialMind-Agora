@@ -13,7 +13,7 @@ async function main() {
   const flow = await import('../lib/engine/flow');
   let failures = 0;
 
-  async function conversation(title: string, language: 'hi' | 'kn' | 'en', steps: Step[]) {
+  async function conversation(title: string, language: import('../lib/vanya').LanguageCode, steps: Step[]) {
     console.log(`\n━━ ${title} (${language}) ━━`);
     const sessionId = await flow.createSession({ channel: 'test', language, callerName: 'Test' });
     const first = await flow.getCurrentQuestion(sessionId);
@@ -81,6 +81,47 @@ async function main() {
     ['howdu', 'accepted'],
     ['togari', 'accepted'],
     ['male illa, bara', 'ended'],
+  ]);
+
+  // Native-script answers, the way ARES returns them for each language.
+  await conversation('Tamil, spoken answers', 'ta', [
+    ['என் நம்பர் 9000000101', 'accepted'],
+    ['ஆமா', 'accepted'],
+    ['நெல்', 'accepted'],
+    ['ரொம்ப பெரிய மழை', 'accepted'],
+    ['வயல்ல நின்னுச்சு', 'accepted'],
+    ['நேத்து', 'accepted'],
+    ['ரெண்டு ஏக்கர்', 'accepted'],
+    ['பாதி', 'accepted'],
+    ['சரி அனுப்புங்க', 'accepted'],
+    ['ஆமா பண்ணுங்க', 'ready_to_file'],
+    ['@file', 'filed'],
+  ]);
+
+  await conversation('Telugu, spoken answers', 'te', [
+    ['9000000202', 'accepted'],
+    ['అవును', 'accepted'],
+    ['కంది', 'accepted'],
+    ['వడగళ్ళు పడ్డాయి', 'accepted'],
+    ['పొలంలో నిలబడి ఉంది', 'accepted'],
+    ['మొన్న', 'accepted'],
+    ['రెండు ఎకరాలు', 'accepted'],
+  ]);
+
+  await conversation('Bengali drought branch', 'bn', [
+    ['9000000303', 'accepted'],
+    ['হ্যাঁ', 'accepted'],
+    ['ভুট্টা', 'accepted'],
+    ['খরা, বৃষ্টি হয়নি', 'ended'],
+  ]);
+
+  await conversation('Gujarati, spoken answers', 'gu', [
+    ['9000000303', 'accepted'],
+    ['હા', 'accepted'],
+    ['સોયાબીન', 'accepted'],
+    ['માવઠું થયું', 'accepted'],
+    ['ખેતરમાં ઊભો હતો', 'accepted'],
+    ['ગઈકાલે', 'accepted'],
   ]);
 
   await conversation('LLM fallback after retries', 'en', [

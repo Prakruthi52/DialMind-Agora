@@ -125,7 +125,15 @@ const MONTHS: Record<string, number> = {
 };
 const DAYS_AGO_WORDS = [
   'days ago', 'day ago', 'din pehle', 'din pahle', 'din hue', 'dino pehle', 'din se',
-  'dina hinde', 'dinagala hinde', 'dinada hinde', 'दिन पहले', 'ದಿನ ಹಿಂದೆ', 'ದಿನಗಳ ಹಿಂದೆ',
+  'dina hinde', 'dinagala hinde', 'dinada hinde', 'दिन पहले', 'दिन हो गए', 'ದಿನ ಹಿಂದೆ', 'ದಿನಗಳ ಹಿಂದೆ', 'ದಿನ ಆಯ್ತು',
+  'நாள் முன்னாடி', 'நாளைக்கு முன்', 'நாட்களுக்கு முன்', 'naal munnadi', // Tamil
+  'రోజుల క్రితం', 'రోజుల ముందు', 'rojula kritam', // Telugu
+  'দিন আগে', 'din age', // Bengali
+  'દિવસ પહેલાં', 'દિવસ પહેલા', 'divas pahela', // Gujarati
+  'दिवसांपूर्वी', 'दिवसांआधी', 'दिवस झाले', 'divsanpurvi', // Marathi
+  'ദിവസം മുമ്പ്', 'ദിവസം മുൻപ്', 'divasam munpu', // Malayalam
+  'ਦਿਨ ਪਹਿਲਾਂ', 'din pehlan', // Punjabi
+  'ଦିନ ପୂର୍ବରୁ', 'ଦିନ ଆଗରୁ', 'dina purbaru', // Odia
 ];
 const WEEK_AGO_WORDS = ['last week', 'pichhle hafte', 'pichle hafte', 'kaleda vaara', 'ಕಳೆದ ವಾರ'];
 

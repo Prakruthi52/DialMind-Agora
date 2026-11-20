@@ -1,4 +1,5 @@
 import type { LlmTool } from 'agora-agents';
+import { LANGUAGE_CODES } from '@/lib/vanya';
 
 // Tool definitions sent to Agora (llm.tools). Agora's cloud calls these HTTPS endpoints
 // synchronously during the conversation. The session id and a shared secret travel as
@@ -85,7 +86,7 @@ export function buildTools(baseUrl: string): LlmTool[] {
     tool(
       'setLanguage',
       'Switch the conversation language when the farmer starts speaking a different language.',
-      { language: { type: 'string', description: 'New language.', enum: ['hi', 'kn', 'en'] } },
+      { language: { type: 'string', description: 'New language.', enum: [...LANGUAGE_CODES] } },
       ['language'],
       baseUrl,
     ),

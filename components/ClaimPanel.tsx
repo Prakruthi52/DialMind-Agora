@@ -38,7 +38,7 @@ function label(t: Translate, key: string, fallback: string) {
 }
 
 function formatDay(iso: string, lang: LanguageCode) {
-  const locale = lang === 'hi' ? 'hi-IN' : lang === 'kn' ? 'kn-IN' : 'en-IN';
+  const locale = `${lang}-IN`;
   return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
     new Date(`${iso}T00:00:00Z`),
   );

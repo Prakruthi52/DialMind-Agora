@@ -135,7 +135,7 @@ export function LoginScreen({
 
           <fieldset className="mt-5">
             <legend className="text-sm font-semibold">{t('callLanguage')}</legend>
-            <div className="mt-2 grid grid-cols-3 gap-2">
+            <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
               {LANGUAGE_OPTIONS.map((opt) => {
                 const active = language === opt.code;
                 return (

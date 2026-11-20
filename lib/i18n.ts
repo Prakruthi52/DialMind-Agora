@@ -2,6 +2,7 @@
 // English is the default. Hindi and Kannada wording should be reviewed by a native speaker.
 
 import type { LanguageCode } from '@/types/conversation';
+import { EXTRA_UI } from './i18n-extra';
 
 const en = {
   // Sign-in
@@ -283,7 +284,13 @@ const kn: Record<TranslationKey, string> = {
   outcome_not_covered: "ಈ ಹಾನಿ ಒಳಗೊಂಡಿಲ್ಲ",
 };
 
-const DICTIONARIES: Record<LanguageCode, Record<TranslationKey, string>> = { en, hi, kn };
+// Extra languages cover the screens a farmer sees; any other key falls back to English.
+const DICTIONARIES: Record<LanguageCode, Partial<Record<TranslationKey, string>>> = {
+  en,
+  hi,
+  kn,
+  ...(EXTRA_UI as Record<Exclude<LanguageCode, 'en' | 'hi' | 'kn'>, Partial<Record<TranslationKey, string>>>),
+};
 
 export type Translate = (key: TranslationKey, vars?: Record<string, string | number>) => string;
 

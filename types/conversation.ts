@@ -9,7 +9,8 @@ export interface AgoraTokenData {
   sessionId?: string;
 }
 
-export type LanguageCode = 'hi' | 'kn' | 'en';
+export type { LanguageCode } from '@/lib/vanya';
+import type { LanguageCode } from '@/lib/vanya';
 
 export interface ClientStartRequest {
   requester_id: string;

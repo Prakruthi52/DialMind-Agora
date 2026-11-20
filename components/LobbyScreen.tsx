@@ -189,7 +189,7 @@ export function LobbyScreen({
           </div>
 
           <p className="mt-5 text-sm font-semibold">{t('callLanguage')}</p>
-          <div className="mt-2 grid grid-cols-3 gap-2">
+          <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
             {LANGUAGE_OPTIONS.map((opt) => {
               const active = profile.language === opt.code;
               return (
