@@ -8,7 +8,7 @@ import { buildSessionReport, type SessionReport } from './report';
 // full trace of a call and returns a disposition (from a fixed list), rubric scores,
 // concrete issues and improvements. Without GEMINI_API_KEY only the rule-based review is stored.
 
-export const JUDGE_MODEL = process.env.GEMINI_MODEL ?? 'gemini-2.5-flash';
+export const JUDGE_MODEL = process.env.GEMINI_MODEL ?? 'gemini-3.8-flash';
 
 const Score = z.number().int().min(1).max(5);
 
@@ -92,6 +92,7 @@ export async function reviewSession(sessionId: string): Promise<SessionReport | 
   if (!report) return null;
 
   let judge: JudgeResult | null = null;
+  let judgeModel: string | null = null;
   let judgeError: string | null = null;
   if (!process.env.GEMINI_API_KEY) {
     judgeError = 'GEMINI_API_KEY not set: rule-based review only.';
@@ -99,7 +100,9 @@ export async function reviewSession(sessionId: string): Promise<SessionReport | 
     judgeError = 'Call still in progress.';
   } else {
     try {
-      judge = await runJudge(report);
+      const out = await runJudge(report);
+      judge = out.result;
+      judgeModel = out.model;
     } catch (error) {
       judgeError = error instanceof Error ? error.message.slice(0, 300) : 'Judge failed';
       console.warn('LLM judge failed:', judgeError);
@@ -122,27 +125,55 @@ export async function reviewSession(sessionId: string): Promise<SessionReport | 
       judge?.summary ?? null,
       JSON.stringify(judge?.issues ?? []),
       JSON.stringify(judge?.improvements ?? []),
-      judge ? JUDGE_MODEL : null,
+      judgeModel,
       judgeError,
     ],
   );
   return buildSessionReport(sessionId);
 }
 
-async function runJudge(report: SessionReport): Promise<JudgeResult> {
+// Fallbacks if the main model is overloaded (503) or rate limited (429).
+const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS ?? 'gemini-3.8-flash-lite,gemini-flash-latest')
+  .split(',')
+  .map((m) => m.trim())
+  .filter(Boolean);
+
+function isTransient(error: unknown): boolean {
+  const msg = error instanceof Error ? error.message : String(error);
+  return /\b(503|429|500)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded/i.test(msg);
+}
+
+async function runJudge(report: SessionReport): Promise<{ result: JudgeResult; model: string }> {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const response = await ai.models.generateContent({
-    model: JUDGE_MODEL,
-    contents: `Review this call trace (JSON):\n\n${JSON.stringify(compactTrace(report))}`,
-    config: {
-      systemInstruction: SYSTEM,
-      temperature: 0.2,
-      responseMimeType: 'application/json',
-      responseJsonSchema: z.toJSONSchema(JudgeSchema),
-    },
-  });
-  const text = response.text;
-  if (!text) throw new Error('The judge returned an empty response.');
-  // Validate: the model's JSON must match the schema before it is stored.
-  return JudgeSchema.parse(JSON.parse(text));
+  const request = (model: string) =>
+    ai.models.generateContent({
+      model,
+      contents: `Review this call trace (JSON):\n\n${JSON.stringify(compactTrace(report))}`,
+      config: {
+        systemInstruction: SYSTEM,
+        temperature: 0.2,
+        responseMimeType: 'application/json',
+        responseJsonSchema: z.toJSONSchema(JudgeSchema),
+      },
+    });
+
+  let lastError: unknown;
+  // Main model with two retries (backoff), then each fallback model once.
+  const attempts = [JUDGE_MODEL, JUDGE_MODEL, JUDGE_MODEL, ...FALLBACK_MODELS];
+  for (let i = 0; i < attempts.length; i++) {
+    const model = attempts[i];
+    try {
+      const response = await request(model);
+      const text = response.text;
+      if (!text) throw new Error('The judge returned an empty response.');
+      // Validate: the model's JSON must match the schema before it is stored.
+      return { result: JudgeSchema.parse(JSON.parse(text)), model };
+    } catch (error) {
+      lastError = error;
+      const unknownModel = /\b404\b|not found|no longer available/i.test(String((error as Error)?.message));
+      if (!isTransient(error) && !unknownModel) throw error;
+      if (i < 2) await new Promise((resolve) => setTimeout(resolve, 1500 * (i + 1)));
+    }
+  }
+  throw lastError;
 }
