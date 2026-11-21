@@ -619,7 +619,7 @@ export default function ConversationComponent({
   const statusText =
     connectionState === 'RECONNECTING'
       ? t('statusReconnecting')
-      : !isAgentConnected
+      : !isAgentConnected && !avatarUser
         ? t('statusJoining')
         : agentState === 'thinking'
           ? t('statusThinking')

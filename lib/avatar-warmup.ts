@@ -63,6 +63,7 @@ async function runWarmup(): Promise<void> {
             tokenExpire: 300,
           }),
           sample_rate: 24000,
+          avatar_model: process.env.NEXT_ANAM_AVATAR_MODEL ?? 'cara-4',
         },
       }),
     )

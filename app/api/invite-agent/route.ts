@@ -209,6 +209,8 @@ export async function POST(request: NextRequest) {
               tokenExpire: 60 * 60,
             }),
             sample_rate: TTS_SAMPLE_RATE,
+            // Custom (cloned) Anam avatars only exist in cara-4 versions; name the model explicitly.
+            avatar_model: process.env.NEXT_ANAM_AVATAR_MODEL ?? 'cara-4',
             quality: 'high',
             video_encoding: 'H264',
           },
