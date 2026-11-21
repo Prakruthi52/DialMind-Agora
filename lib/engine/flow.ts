@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { after } from 'next/server';
-import { isWhatsAppConfigured, sendWhatsApp } from '@/lib/notify/whatsapp';
+import { isWhatsAppConfigured, sendConfirmation } from '@/lib/notify/whatsapp';
 import { queryAll, queryOne, run } from '@/lib/db';
 import { LANGUAGES, type LanguageCode } from '@/lib/vanya';
 import {
@@ -729,12 +729,12 @@ export async function fileClaim(sessionId: string, confirmed: boolean, farmerWor
   if (confirmation && isWhatsAppConfigured()) {
     const to = ctx.session.caller_mobile || ctx.policy.mobile;
     const send = async () => {
-      const result = await sendWhatsApp(to, confirmation.message);
+      const result = await sendConfirmation(to, confirmation.message);
       await run(
-        `UPDATE follow_ups SET status = ?, channel = 'whatsapp' WHERE claim_id = ? AND kind = 'sms_confirmation'`,
-        [result.ok ? 'sent' : 'failed', claimId],
+        `UPDATE follow_ups SET status = ?, channel = ? WHERE claim_id = ? AND kind = 'sms_confirmation'`,
+        [result.ok ? 'sent' : 'failed', result.channel ?? 'whatsapp', claimId],
       );
-      if (!result.ok) console.warn('WhatsApp confirmation failed:', result.error);
+      if (!result.ok) console.warn('Claim confirmation not delivered:', result.error);
     };
     try {
       after(send); // keeps the serverless function alive until the message is sent
@@ -782,7 +782,7 @@ export async function getSessionState(sessionId: string) {
   const current = nextQuestion(ctx);
   const claim = await queryOne<Record<string, unknown>>('SELECT * FROM claims WHERE session_id = ?', [sessionId]);
   const followUps = claim
-    ? await queryAll('SELECT kind, scheduled_for, message, status FROM follow_ups WHERE claim_id = ? ORDER BY scheduled_for', [
+    ? await queryAll('SELECT kind, scheduled_for, message, status, channel FROM follow_ups WHERE claim_id = ? ORDER BY scheduled_for', [
         claim.claim_id as string,
       ])
     : [];
