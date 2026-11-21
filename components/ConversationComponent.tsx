@@ -664,7 +664,7 @@ export default function ConversationComponent({
           <div className="pointer-events-none absolute inset-0 isolate z-0">
           {/* Poster shown until the avatar's video arrives */}
           <Image
-            src="/vanya.jpg"
+            src="/vanya.webp"
             alt=""
             fill
             priority
@@ -704,7 +704,7 @@ export default function ConversationComponent({
               <div className="relative">
                 <span className="absolute inset-0 animate-ping rounded-full bg-[#f4a51c]/35" />
                 <div className="relative h-24 w-24 overflow-hidden rounded-full ring-4 ring-[#f4a51c]/70">
-                  <Image src="/vanya.jpg" alt="Vanya" fill sizes="6rem" className="object-cover object-[50%_30%]" />
+                  <Image src="/vanya.webp" alt="Vanya" fill sizes="6rem" className="object-cover object-[50%_30%]" />
                 </div>
               </div>
               <p className="rounded-full bg-black/40 px-4 py-1.5 text-sm backdrop-blur-md">

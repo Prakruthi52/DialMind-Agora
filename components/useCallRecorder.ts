@@ -55,7 +55,7 @@ export function useCallRecorder(sessionId: string | undefined, active: boolean, 
     canvas.height = HEIGHT;
     const ctx = canvas.getContext('2d')!;
     const poster = new Image();
-    poster.src = '/vanya.jpg';
+    poster.src = '/vanya.webp';
     let avatarVideo: HTMLVideoElement | null = null;
     let selfVideo: HTMLVideoElement | null = null;
 

@@ -170,7 +170,7 @@ export function LobbyScreen({
           <div className="mt-5 flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm">
             <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl">
               <Image
-                src="/vanya.jpg"
+                src="/vanya.webp"
                 alt="Vanya"
                 fill
                 sizes="4rem"

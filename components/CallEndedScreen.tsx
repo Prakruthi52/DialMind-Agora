@@ -35,7 +35,7 @@ export function CallEndedScreen({
       <div className="flex flex-1 items-center justify-center px-5 pb-12">
         <div className="w-full max-w-md animate-fade-up rounded-3xl bg-white p-8 text-center shadow-[0_20px_60px_-20px_rgba(15,46,32,.25)]">
           <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full ring-4 ring-[#f4a51c]">
-            <Image src="/vanya.jpg" alt="Vanya" fill sizes="5rem" className="object-cover object-[50%_30%]" />
+            <Image src="/vanya.webp" alt="Vanya" fill sizes="5rem" className="object-cover object-[50%_30%]" />
           </div>
           <h1 className="mt-5 flex items-center justify-center gap-2 text-2xl font-bold">
             <CheckCircle2 className="h-6 w-6 text-[#1f6b45]" /> {t('callEnded')}

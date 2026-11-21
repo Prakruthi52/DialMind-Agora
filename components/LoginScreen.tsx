@@ -49,7 +49,7 @@ export function LoginScreen({
           <div className="mt-6 flex items-center gap-4 lg:mt-10 lg:items-start lg:gap-8">
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full ring-4 ring-[#f4a51c] lg:h-40 lg:w-40">
               <Image
-                src="/vanya.jpg"
+                src="/vanya.webp"
                 alt="Vanya, the DialMind claims assistant"
                 fill
                 priority
