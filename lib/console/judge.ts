@@ -133,7 +133,8 @@ export async function reviewSession(sessionId: string): Promise<SessionReport | 
 }
 
 // Fallbacks if the main model is overloaded (503) or rate limited (429).
-const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS ?? 'gemini-3.8-flash-lite,gemini-flash-latest')
+// Each model has its own free-tier quota, so a quota-exhausted main model still has backups.
+const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS ?? 'gemini-3.5-flash,gemini-3.5-flash-lite,gemini-3.1-flash-lite')
   .split(',')
   .map((m) => m.trim())
   .filter(Boolean);
@@ -159,9 +160,12 @@ async function runJudge(report: SessionReport): Promise<{ result: JudgeResult; m
 
   let lastError: unknown;
   // Main model with two retries (backoff), then each fallback model once.
-  const attempts = [JUDGE_MODEL, JUDGE_MODEL, JUDGE_MODEL, ...FALLBACK_MODELS];
+  const attempts = [JUDGE_MODEL, JUDGE_MODEL, JUDGE_MODEL, ...FALLBACK_MODELS.filter((m) => m !== JUDGE_MODEL)];
+  const exhausted = new Set<string>();
   for (let i = 0; i < attempts.length; i++) {
     const model = attempts[i];
+    // A used-up quota (daily/minute limit) will not recover in seconds: skip straight to fallbacks.
+    if (exhausted.has(model)) continue;
     try {
       const response = await request(model);
       const text = response.text;
@@ -170,9 +174,10 @@ async function runJudge(report: SessionReport): Promise<{ result: JudgeResult; m
       return { result: JudgeSchema.parse(JSON.parse(text)), model };
     } catch (error) {
       lastError = error;
+      if (/exceeded your current quota|RESOURCE_EXHAUSTED/i.test(String((error as Error)?.message))) exhausted.add(model);
       const unknownModel = /\b404\b|not found|no longer available/i.test(String((error as Error)?.message));
       if (!isTransient(error) && !unknownModel) throw error;
-      if (i < 2) await new Promise((resolve) => setTimeout(resolve, 1500 * (i + 1)));
+      if (i < 2 && !exhausted.has(model)) await new Promise((resolve) => setTimeout(resolve, 1500 * (i + 1)));
     }
   }
   throw lastError;
