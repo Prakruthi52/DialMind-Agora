@@ -21,7 +21,7 @@ export const LANGS = {
       not_understood: 'माफ़ कीजिए, ठीक से सुन नहीं पाई।',
     },
     q: {
-      policy_ref: 'अपना mobile नंबर बता दीजिए जो बीमा में दिया था, या फिर policy नंबर।',
+      policy_ref: 'अपना 8 अंकों वाला registration नंबर बता दीजिए जी, जो बीमा की पर्ची पर लिखा है।',
       confirm_identity: 'अच्छा, {village} के {farmer_name} जी के नाम पर policy मिली है। ये आप ही हैं ना?',
       crop_affected: 'कौन सी फसल खराब हुई है? आपकी policy में {insured_crops} है।',
       cause_of_loss: 'नुकसान कैसे हुआ? ओले पड़े, बाढ़ आई, बेमौसम बारिश हुई, या जानवरों ने खराब किया?',
@@ -35,7 +35,7 @@ export const LANGS = {
       final_confirmation: 'एक बार देख लीजिए: {summary}। सब सही है? Claim दर्ज कर दूँ?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'इस नंबर से कोई policy नहीं मिली। एक बार धीरे-धीरे फिर से बोलिए?',
+      R_POLICY_NOT_FOUND: 'ये registration नंबर नहीं मिला। पर्ची देखकर 8 अंक एक-एक करके फिर से बोलिए?',
       R_IDENTITY_DENIED: 'कोई बात नहीं, दूसरा नंबर बताइए।',
       R_CROP_NOT_INSURED: 'ये फसल आपकी policy में नहीं है जी। Policy में {insured_crops} है।',
       R_AREA_BASED_CAUSE:
@@ -63,7 +63,7 @@ export const LANGS = {
       not_understood: 'ಕ್ಷಮಿಸಿ, ಸರಿಯಾಗಿ ಕೇಳಿಸ್ಲಿಲ್ಲ.',
     },
     q: {
-      policy_ref: 'ವಿಮೆಗೆ ಕೊಟ್ಟಿರೋ mobile ನಂಬರ್ ಹೇಳಿ, ಇಲ್ಲಾಂದ್ರೆ policy ನಂಬರ್ ಹೇಳಿ.',
+      policy_ref: 'ವಿಮೆ ಚೀಟಿ ಮೇಲೆ ಇರೋ 8 ಅಂಕಿ registration ನಂಬರ್ ಹೇಳಿ.',
       confirm_identity: 'ಸರಿ, {village} ಊರಿನ {farmer_name} ಅವರ ಹೆಸರಲ್ಲಿ policy ಸಿಕ್ತು. ಅದು ನೀವೇನಾ?',
       crop_affected: 'ಯಾವ ಬೆಳೆ ಹಾಳಾಗಿದೆ? ನಿಮ್ಮ policy ಲಿ {insured_crops} ಇದೆ.',
       cause_of_loss: 'ಹೇಗೆ ಹಾಳಾಯ್ತು? ಆಲಿಕಲ್ಲು ಮಳೆ, ನೆರೆ, ಅಕಾಲಿಕ ಮಳೆ, ಇಲ್ಲಾ ಪ್ರಾಣಿಗಳು ಹಾಳ್ಮಾಡಿದ್ವಾ?',
@@ -77,7 +77,7 @@ export const LANGS = {
       final_confirmation: 'ಒಂದ್ಸಲ ನೋಡಿ: {summary}. ಎಲ್ಲಾ ಸರಿ ಇದೆಯಾ? Claim ಹಾಕ್ಲಾ?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'ಈ ನಂಬರ್ಗೆ policy ಸಿಗ್ಲಿಲ್ಲ. ಒಂದ್ಸಲ ನಿಧಾನವಾಗಿ ಮತ್ತೆ ಹೇಳ್ತೀರಾ?',
+      R_POLICY_NOT_FOUND: 'ಈ registration ನಂಬರ್ ಸಿಗ್ಲಿಲ್ಲ. ಚೀಟಿ ನೋಡ್ಕೊಂಡು 8 ಅಂಕಿ ಒಂದೊಂದಾಗಿ ಮತ್ತೆ ಹೇಳ್ತೀರಾ?',
       R_IDENTITY_DENIED: 'ಪರವಾಗಿಲ್ಲ, ಬೇರೆ ನಂಬರ್ ಹೇಳಿ.',
       R_CROP_NOT_INSURED: 'ಆ ಬೆಳೆ ನಿಮ್ಮ policy ಲಿ ಇಲ್ಲ. Policy ಲಿ {insured_crops} ಇದೆ.',
       R_AREA_BASED_CAUSE: 'ಬರ, ಹುಳದ ನಷ್ಟ ಇಡೀ ಊರಿಗೆ ಒಟ್ಟಿಗೆ ಅಂದಾಜು ಮಾಡ್ತಾರೆ, ಬೇರೆ claim ಬೇಕಿಲ್ಲ. ನಿಮ್ಮ ದೂರು ಬರ್ಕೊಂಡಿದೀನಿ.',
@@ -104,7 +104,7 @@ export const LANGS = {
       not_understood: 'மன்னிக்கணும், சரியா கேக்கல.',
     },
     q: {
-      policy_ref: 'காப்பீட்டுல கொடுத்த mobile நம்பர் சொல்லுங்க, இல்லன்னா policy நம்பர் சொல்லுங்க.',
+      policy_ref: 'காப்பீட்டு சீட்டுல இருக்கிற 8 இலக்க registration நம்பர் சொல்லுங்க.',
       confirm_identity: 'சரி, {village} ஊர் {farmer_name} பேர்ல policy இருக்கு. அது நீங்கதானா?',
       crop_affected: 'எந்த பயிர் சேதமாச்சு? உங்க policy-ல {insured_crops} இருக்கு.',
       cause_of_loss: 'எப்படி சேதமாச்சு? ஆலங்கட்டி மழை, வெள்ளம், பருவம் தவறின மழை, இல்ல மிருகங்கள் நாசம் பண்ணுச்சா?',
@@ -118,7 +118,7 @@ export const LANGS = {
       final_confirmation: 'ஒரு தடவை பாருங்க: {summary}. எல்லாம் சரியா? Claim பதிவு பண்ணட்டுமா?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'இந்த நம்பருக்கு policy கிடைக்கல. மெதுவா இன்னொரு தடவை சொல்றீங்களா?',
+      R_POLICY_NOT_FOUND: 'இந்த registration நம்பர் கிடைக்கல. சீட்டைப் பார்த்து 8 இலக்கத்தையும் ஒவ்வொண்ணா மறுபடி சொல்றீங்களா?',
       R_IDENTITY_DENIED: 'பரவாயில்ல, வேற நம்பர் சொல்லுங்க.',
       R_CROP_NOT_INSURED: 'அந்த பயிர் உங்க policy-ல இல்ல. Policy-ல {insured_crops} இருக்கு.',
       R_AREA_BASED_CAUSE: 'வறட்சி, பூச்சி சேதத்தை ஊர் முழுக்க சேர்த்துதான் கணக்கெடுப்பாங்க, தனி claim தேவையில்ல. உங்க புகாரை பதிவு பண்ணிட்டேன்.',
@@ -145,7 +145,7 @@ export const LANGS = {
       not_understood: 'క్షమించండి, సరిగ్గా వినపడలేదు.',
     },
     q: {
-      policy_ref: 'బీమాలో ఇచ్చిన mobile నంబర్ చెప్పండి, లేకపోతే policy నంబర్ చెప్పండి.',
+      policy_ref: 'బీమా చీటీ మీద ఉన్న 8 అంకెల registration నంబర్ చెప్పండి.',
       confirm_identity: 'సరే, {village} ఊరి {farmer_name} గారి పేరు మీద policy దొరికింది. అది మీరేనా?',
       crop_affected: 'ఏ పంట పాడైంది? మీ policy లో {insured_crops} ఉంది.',
       cause_of_loss: 'ఎలా పాడైంది? వడగళ్ల వాన, వరద, అకాల వర్షం, లేక జంతువులు పాడు చేశాయా?',
@@ -159,7 +159,7 @@ export const LANGS = {
       final_confirmation: 'ఒకసారి చూడండి: {summary}. అంతా సరేనా? Claim నమోదు చేయనా?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'ఈ నంబర్‌కి policy దొరకలేదు. నెమ్మదిగా మళ్ళీ చెప్తారా?',
+      R_POLICY_NOT_FOUND: 'ఈ registration నంబర్ దొరకలేదు. చీటీ చూసి 8 అంకెలు ఒక్కొక్కటిగా మళ్ళీ చెప్తారా?',
       R_IDENTITY_DENIED: 'పర్వాలేదు, వేరే నంబర్ చెప్పండి.',
       R_CROP_NOT_INSURED: 'ఆ పంట మీ policy లో లేదు. Policy లో {insured_crops} ఉంది.',
       R_AREA_BASED_CAUSE: 'కరువు, పురుగుల నష్టాన్ని ఊరంతా కలిపి అంచనా వేస్తారు, వేరే claim అవసరం లేదు. మీ ఫిర్యాదు నమోదు చేశాను.',
@@ -186,7 +186,7 @@ export const LANGS = {
       not_understood: 'দুঃখিত, ঠিক করে শুনতে পেলাম না।',
     },
     q: {
-      policy_ref: 'বিমায় যে mobile নম্বর দিয়েছিলেন সেটা বলুন, নয়তো policy নম্বর বলুন।',
+      policy_ref: 'বিমার কাগজে লেখা 8 সংখ্যার registration নম্বরটা বলুন।',
       confirm_identity: 'আচ্ছা, {village} গ্রামের {farmer_name}-এর নামে policy পেয়েছি। এটা আপনিই তো?',
       crop_affected: 'কোন ফসলটা নষ্ট হয়েছে? আপনার policy-তে {insured_crops} আছে।',
       cause_of_loss: 'কীভাবে নষ্ট হলো? শিলাবৃষ্টি, বন্যা, অসময়ের বৃষ্টি, নাকি জন্তু-জানোয়ার নষ্ট করেছে?',
@@ -200,7 +200,7 @@ export const LANGS = {
       final_confirmation: 'একবার দেখে নিন: {summary}। সব ঠিক আছে? Claim জমা করে দেব?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'এই নম্বরে কোনো policy পেলাম না। আস্তে আস্তে আরেকবার বলবেন?',
+      R_POLICY_NOT_FOUND: 'এই registration নম্বর পেলাম না। কাগজ দেখে 8টা সংখ্যা একটা একটা করে আবার বলবেন?',
       R_IDENTITY_DENIED: 'কোনো ব্যাপার না, অন্য নম্বরটা বলুন।',
       R_CROP_NOT_INSURED: 'এই ফসলটা আপনার policy-তে নেই। Policy-তে {insured_crops} আছে।',
       R_AREA_BASED_CAUSE: 'খরা আর পোকার ক্ষতি পুরো এলাকা মিলিয়ে হিসেব হয়, আলাদা claim লাগে না। আপনার অভিযোগ লিখে নিয়েছি।',
@@ -227,7 +227,7 @@ export const LANGS = {
       not_understood: 'માફ કરજો, બરાબર સંભળાયું નહીં.',
     },
     q: {
-      policy_ref: 'વીમામાં આપેલો mobile નંબર કહો, નહીં તો policy નંબર કહો.',
+      policy_ref: 'વીમાની પરચી પર લખેલો 8 આંકડાનો registration નંબર કહો.',
       confirm_identity: 'સારું, {village} ગામના {farmer_name} ના નામે policy મળી છે. એ તમે જ છો ને?',
       crop_affected: 'કયો પાક બગડ્યો છે? તમારી policy માં {insured_crops} છે.',
       cause_of_loss: 'નુકસાન કેવી રીતે થયું? કરા પડ્યા, પૂર આવ્યું, કમોસમી વરસાદ, કે જાનવરોએ બગાડ્યું?',
@@ -241,7 +241,7 @@ export const LANGS = {
       final_confirmation: 'એક વાર જોઈ લો: {summary}. બધું બરાબર છે? Claim નોંધી દઉં?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'આ નંબરથી કોઈ policy ના મળી. ધીમે ધીમે ફરી એક વાર કહેશો?',
+      R_POLICY_NOT_FOUND: 'આ registration નંબર ના મળ્યો. પરચી જોઈને 8 આંકડા એક એક કરીને ફરી કહેશો?',
       R_IDENTITY_DENIED: 'કંઈ વાંધો નહીં, બીજો નંબર કહો.',
       R_CROP_NOT_INSURED: 'આ પાક તમારી policy માં નથી. Policy માં {insured_crops} છે.',
       R_AREA_BASED_CAUSE: 'દુષ્કાળ અને જીવાતનું નુકસાન આખા વિસ્તાર માટે ભેગું ગણાય છે, અલગ claim ની જરૂર નથી. તમારી ફરિયાદ નોંધી લીધી છે.',
@@ -268,7 +268,7 @@ export const LANGS = {
       not_understood: 'माफ करा, नीट ऐकू आलं नाही.',
     },
     q: {
-      policy_ref: 'विम्यात दिलेला mobile नंबर सांगा, नाहीतर policy नंबर सांगा.',
+      policy_ref: 'विम्याच्या पावतीवर असलेला 8 अंकी registration नंबर सांगा.',
       confirm_identity: 'बरं, {village} गावचे {farmer_name} यांच्या नावावर policy सापडली. ते तुम्हीच ना?',
       crop_affected: 'कोणतं पीक खराब झालं? तुमच्या policy मध्ये {insured_crops} आहे.',
       cause_of_loss: 'नुकसान कसं झालं? गारपीट, पूर, अवकाळी पाऊस, की जनावरांनी खराब केलं?',
@@ -282,7 +282,7 @@ export const LANGS = {
       final_confirmation: 'एकदा बघून घ्या: {summary}. सगळं बरोबर आहे? Claim नोंदवू का?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'या नंबरवर policy सापडली नाही. हळू हळू पुन्हा एकदा सांगाल?',
+      R_POLICY_NOT_FOUND: 'हा registration नंबर सापडला नाही. पावती बघून 8 अंक एक एक करून पुन्हा सांगाल?',
       R_IDENTITY_DENIED: 'काही हरकत नाही, दुसरा नंबर सांगा.',
       R_CROP_NOT_INSURED: 'हे पीक तुमच्या policy मध्ये नाही. Policy मध्ये {insured_crops} आहे.',
       R_AREA_BASED_CAUSE: 'दुष्काळ आणि किडीचं नुकसान पूर्ण भागासाठी एकत्र मोजतात, वेगळा claim लागत नाही. तुमची तक्रार नोंदवली आहे.',
@@ -309,7 +309,7 @@ export const LANGS = {
       not_understood: 'ക്ഷമിക്കണം, ശരിക്ക് കേട്ടില്ല.',
     },
     q: {
-      policy_ref: 'ഇൻഷുറൻസിൽ കൊടുത്ത mobile നമ്പർ പറയൂ, അല്ലെങ്കിൽ policy നമ്പർ പറയൂ.',
+      policy_ref: 'ഇൻഷുറൻസ് ചീട്ടിലുള്ള 8 അക്ക registration നമ്പർ പറയൂ.',
       confirm_identity: 'ശരി, {village}-ലെ {farmer_name}-ന്റെ പേരിൽ policy കിട്ടി. അത് നിങ്ങൾ തന്നെയാണോ?',
       crop_affected: 'ഏത് വിളയാണ് നശിച്ചത്? നിങ്ങളുടെ policy-യിൽ {insured_crops} ഉണ്ട്.',
       cause_of_loss: 'എങ്ങനെയാണ് നശിച്ചത്? ആലിപ്പഴം, വെള്ളപ്പൊക്കം, അകാല മഴ, അതോ മൃഗങ്ങൾ നശിപ്പിച്ചോ?',
@@ -323,7 +323,7 @@ export const LANGS = {
       final_confirmation: 'ഒന്ന് നോക്കൂ: {summary}. എല്ലാം ശരിയാണോ? Claim രജിസ്റ്റർ ചെയ്യട്ടേ?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'ഈ നമ്പറിൽ policy കിട്ടിയില്ല. പതുക്കെ ഒന്നുകൂടി പറയാമോ?',
+      R_POLICY_NOT_FOUND: 'ഈ registration നമ്പർ കിട്ടിയില്ല. ചീട്ട് നോക്കി 8 അക്കം ഓരോന്നായി ഒന്നുകൂടി പറയാമോ?',
       R_IDENTITY_DENIED: 'കുഴപ്പമില്ല, വേറെ നമ്പർ പറയൂ.',
       R_CROP_NOT_INSURED: 'ആ വിള നിങ്ങളുടെ policy-യിൽ ഇല്ല. Policy-യിൽ {insured_crops} ഉണ്ട്.',
       R_AREA_BASED_CAUSE: 'വരൾച്ചയും കീടനാശവും പ്രദേശം മുഴുവൻ ഒരുമിച്ചാണ് കണക്കാക്കുന്നത്, വേറെ claim വേണ്ട. പരാതി രേഖപ്പെടുത്തി.',
@@ -350,7 +350,7 @@ export const LANGS = {
       not_understood: 'ਮਾਫ਼ ਕਰਨਾ, ਠੀਕ ਤਰ੍ਹਾਂ ਸੁਣਿਆ ਨਹੀਂ।',
     },
     q: {
-      policy_ref: 'ਬੀਮੇ ਵਿੱਚ ਦਿੱਤਾ mobile ਨੰਬਰ ਦੱਸੋ, ਨਹੀਂ ਤਾਂ policy ਨੰਬਰ ਦੱਸੋ।',
+      policy_ref: 'ਬੀਮੇ ਦੀ ਪਰਚੀ ਤੇ ਲਿਖਿਆ 8 ਅੰਕਾਂ ਵਾਲਾ registration ਨੰਬਰ ਦੱਸੋ।',
       confirm_identity: 'ਅੱਛਾ, {village} ਦੇ {farmer_name} ਜੀ ਦੇ ਨਾਂ ਤੇ policy ਮਿਲੀ ਹੈ। ਇਹ ਤੁਸੀਂ ਹੀ ਹੋ ਨਾ?',
       crop_affected: 'ਕਿਹੜੀ ਫ਼ਸਲ ਖ਼ਰਾਬ ਹੋਈ? ਤੁਹਾਡੀ policy ਵਿੱਚ {insured_crops} ਹੈ।',
       cause_of_loss: 'ਨੁਕਸਾਨ ਕਿਵੇਂ ਹੋਇਆ? ਗੜੇ ਪਏ, ਹੜ੍ਹ ਆਇਆ, ਬੇਮੌਸਮੀ ਮੀਂਹ, ਜਾਂ ਜਾਨਵਰਾਂ ਨੇ ਖ਼ਰਾਬ ਕੀਤਾ?',
@@ -364,7 +364,7 @@ export const LANGS = {
       final_confirmation: 'ਇੱਕ ਵਾਰ ਵੇਖ ਲਓ: {summary}। ਸਭ ਠੀਕ ਹੈ? Claim ਦਰਜ ਕਰ ਦਿਆਂ?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'ਇਸ ਨੰਬਰ ਤੇ ਕੋਈ policy ਨਹੀਂ ਮਿਲੀ। ਹੌਲੀ ਹੌਲੀ ਇੱਕ ਵਾਰ ਫਿਰ ਦੱਸੋਗੇ?',
+      R_POLICY_NOT_FOUND: 'ਇਹ registration ਨੰਬਰ ਨਹੀਂ ਮਿਲਿਆ। ਪਰਚੀ ਵੇਖ ਕੇ 8 ਅੰਕ ਇੱਕ ਇੱਕ ਕਰਕੇ ਫਿਰ ਦੱਸੋਗੇ?',
       R_IDENTITY_DENIED: 'ਕੋਈ ਗੱਲ ਨਹੀਂ, ਦੂਜਾ ਨੰਬਰ ਦੱਸੋ।',
       R_CROP_NOT_INSURED: 'ਇਹ ਫ਼ਸਲ ਤੁਹਾਡੀ policy ਵਿੱਚ ਨਹੀਂ ਹੈ। Policy ਵਿੱਚ {insured_crops} ਹੈ।',
       R_AREA_BASED_CAUSE: 'ਸੋਕੇ ਤੇ ਕੀੜਿਆਂ ਦਾ ਨੁਕਸਾਨ ਸਾਰੇ ਇਲਾਕੇ ਲਈ ਇਕੱਠਾ ਦੇਖਿਆ ਜਾਂਦਾ ਹੈ, ਵੱਖਰਾ claim ਨਹੀਂ ਲੱਗਦਾ। ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਲਿਖ ਲਈ ਹੈ।',
@@ -391,7 +391,7 @@ export const LANGS = {
       not_understood: 'କ୍ଷମା କରିବେ, ଠିକ୍ ଶୁଣିପାରିଲି ନାହିଁ।',
     },
     q: {
-      policy_ref: 'ବୀମାରେ ଦେଇଥିବା mobile ନମ୍ବର କୁହନ୍ତୁ, ନହେଲେ policy ନମ୍ବର କୁହନ୍ତୁ।',
+      policy_ref: 'ବୀମା କାଗଜରେ ଲେଖାଥିବା 8 ଅଙ୍କର registration ନମ୍ବର କୁହନ୍ତୁ।',
       confirm_identity: 'ଆଚ୍ଛା, {village} ର {farmer_name} ଙ୍କ ନାଁରେ policy ମିଳିଲା। ଏହା ଆପଣ ତ?',
       crop_affected: 'କେଉଁ ଫସଲ ନଷ୍ଟ ହୋଇଛି? ଆପଣଙ୍କ policy ରେ {insured_crops} ଅଛି।',
       cause_of_loss: 'କେମିତି ନଷ୍ଟ ହେଲା? କୁଆପଥର, ବନ୍ୟା, ଅସମୟ ବର୍ଷା, ନା ଜନ୍ତୁ ନଷ୍ଟ କଲେ?',
@@ -405,7 +405,7 @@ export const LANGS = {
       final_confirmation: 'ଥରେ ଦେଖିନିଅନ୍ତୁ: {summary}। ସବୁ ଠିକ୍ ଅଛି? Claim ଦାଖଲ କରିଦେବି?',
     },
     r: {
-      R_POLICY_NOT_FOUND: 'ଏହି ନମ୍ବରରେ policy ମିଳିଲା ନାହିଁ। ଧୀରେ ଧୀରେ ଆଉ ଥରେ କହିବେ?',
+      R_POLICY_NOT_FOUND: 'ଏହି registration ନମ୍ବର ମିଳିଲା ନାହିଁ। କାଗଜ ଦେଖି 8ଟି ଅଙ୍କ ଗୋଟି ଗୋଟି କରି ପୁଣି କହିବେ?',
       R_IDENTITY_DENIED: 'କିଛି କଥା ନାହିଁ, ଅନ୍ୟ ନମ୍ବର କୁହନ୍ତୁ।',
       R_CROP_NOT_INSURED: 'ସେହି ଫସଲ ଆପଣଙ୍କ policy ରେ ନାହିଁ। Policy ରେ {insured_crops} ଅଛି।',
       R_AREA_BASED_CAUSE: 'ମରୁଡ଼ି ଆଉ ପୋକ କ୍ଷତି ପୁରା ଅଞ୍ଚଳ ମିଶାଇ ଆକଳନ ହୁଏ, ଅଲଗା claim ଦରକାର ନାହିଁ। ଆପଣଙ୍କ ଅଭିଯୋଗ ଲେଖିନେଲି।',

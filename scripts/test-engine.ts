@@ -45,7 +45,7 @@ async function main() {
 
   // Dates relative to today so the 72-hour and 14-day rules behave the same any day.
   await conversation('Happy path, Hinglish, post-harvest rain', 'hi', [
-    ['mera number hai nau zero zero zero zero zero zero one zero one', 'accepted'],
+    ['mera registration number hai four one zero zero zero one zero one', 'accepted'],
     ['haan ji', 'accepted'],
     ['dhaan ka nuksaan hua', 'accepted'],
     ['bahut tez barish hui', 'accepted'],
@@ -60,9 +60,9 @@ async function main() {
   ]);
 
   await conversation('Rules: not my policy, uninsured crop, area too big, fuzzy cause', 'en', [
-    ['my number is 9000000202', 'accepted'],
+    ['my registration number is 41000202', 'accepted'],
     ['no', 'retry'],
-    ['9000000101', 'accepted'],
+    ['41000101', 'accepted'],
     ['yes', 'accepted'],
     ['cotton', 'retry'],
     ['ragi', 'accepted'],
@@ -77,7 +77,7 @@ async function main() {
   ]);
 
   await conversation('Drought → area-based branch', 'kn', [
-    ['9000000202', 'accepted'],
+    ['41000202', 'accepted'],
     ['howdu', 'accepted'],
     ['togari', 'accepted'],
     ['male illa, bara', 'ended'],
@@ -85,7 +85,7 @@ async function main() {
 
   // Native-script answers, the way ARES returns them for each language.
   await conversation('Tamil, spoken answers', 'ta', [
-    ['என் நம்பர் 9000000101', 'accepted'],
+    ['என் நம்பர் 41000101', 'accepted'],
     ['ஆமா', 'accepted'],
     ['நெல்', 'accepted'],
     ['ரொம்ப பெரிய மழை', 'accepted'],
@@ -99,7 +99,7 @@ async function main() {
   ]);
 
   await conversation('Telugu, spoken answers', 'te', [
-    ['9000000202', 'accepted'],
+    ['41000202', 'accepted'],
     ['అవును', 'accepted'],
     ['కంది', 'accepted'],
     ['వడగళ్ళు పడ్డాయి', 'accepted'],
@@ -109,14 +109,14 @@ async function main() {
   ]);
 
   await conversation('Bengali drought branch', 'bn', [
-    ['9000000303', 'accepted'],
+    ['41000303', 'accepted'],
     ['হ্যাঁ', 'accepted'],
     ['ভুট্টা', 'accepted'],
     ['খরা, বৃষ্টি হয়নি', 'ended'],
   ]);
 
   await conversation('Gujarati, spoken answers', 'gu', [
-    ['9000000303', 'accepted'],
+    ['41000303', 'accepted'],
     ['હા', 'accepted'],
     ['સોયાબીન', 'accepted'],
     ['માવઠું થયું', 'accepted'],
@@ -124,9 +124,16 @@ async function main() {
     ['ગઈકાલે', 'accepted'],
   ]);
 
+  await conversation('Registration number validation', 'en', [
+    ['9000000101', 'retry'],          // a mobile number is not a registration number
+    ['4100010', 'retry'],             // 7 digits
+    ['41009999', 'retry'],            // right format, not in the database
+    ['four one zero zero zero three zero three', 'accepted'],
+  ]);
+
   await conversation('Interruptions and "say again"', 'hi', [
     ['kya? phir se boliye', 'repeat'],
-    ['9000000101', 'accepted'],
+    ['41000101', 'accepted'],
     ['hello?', 'repeat'],
     ['haan ji', 'accepted'],
     ['समझ नहीं आया', 'repeat'],
@@ -137,11 +144,11 @@ async function main() {
 
   await conversation('Tamil interruption', 'ta', [
     ['என்ன?', 'repeat'],
-    ['9000000202', 'accepted'],
+    ['41000202', 'accepted'],
   ]);
 
   await conversation('LLM fallback after retries', 'en', [
-    ['9000000303', 'accepted'],
+    ['41000303', 'accepted'],
     ['yes', 'accepted'],
     ['the yellow beans one', 'retry'],
     ['you know the one for oil', 'needs_interpretation'],

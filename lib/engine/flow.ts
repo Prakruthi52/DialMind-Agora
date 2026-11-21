@@ -237,7 +237,7 @@ function labelFor(ctx: Ctx, code: string, value: string): string {
     case 'date':
       return formatDate(value, lang);
     case 'policy_ref':
-      return ctx.policy ? `${ctx.policy.policy_no} (${ctx.policy.farmer_name})` : value;
+      return ctx.policy ? `${ctx.policy.registration_no} (${ctx.policy.farmer_name})` : value;
     default:
       return value;
   }
@@ -471,12 +471,18 @@ export async function submitAnswer(
         ...askPayload(ctx, q),
       };
     }
+    // Digits heard but not a valid 8-digit registration number (e.g. a mobile number):
+    // tell the farmer exactly what is needed instead of a generic "didn't catch that".
+    const formatRule =
+      q.answer_type === 'policy_ref' && match.reason?.startsWith('heard ')
+        ? ctx.data.rules.find((r) => r.code === 'R_POLICY_NOT_FOUND')
+        : undefined;
     return {
       result: 'retry',
       instruction:
         'The answer was not clear. Say the apology line, then ask the same question again in simpler words, using the hint or an example.',
       reason: match.reason,
-      messages: [textFor(ctx, 'not_understood')],
+      messages: [formatRule ? fill(ruleMessage(formatRule, ctx.session.language), ctx) : textFor(ctx, 'not_understood')],
       ...askPayload(ctx, q),
     };
   }
@@ -484,14 +490,9 @@ export async function submitAnswer(
   return acceptAnswer(ctx, q, raw, match);
 }
 
-async function resolvePolicy(value: string): Promise<PolicyRow | null> {
-  if (value.startsWith('SUFFIX:')) {
-    return queryOne<PolicyRow>("SELECT * FROM policies WHERE policy_no LIKE ?", [`%-${value.slice(7)}`]);
-  }
-  if (/^\d{10}$/.test(value)) {
-    return queryOne<PolicyRow>('SELECT * FROM policies WHERE mobile = ?', [value]);
-  }
-  return queryOne<PolicyRow>('SELECT * FROM policies WHERE policy_no = ?', [value]);
+/** Looks up the standard 8-digit registration number in the policies table. */
+async function resolvePolicy(registrationNo: string): Promise<PolicyRow | null> {
+  return queryOne<PolicyRow>('SELECT * FROM policies WHERE registration_no = ?', [registrationNo]);
 }
 
 async function acceptAnswer(ctx: Ctx, q: Question, raw: string, match: MatchResult): Promise<ToolResult> {

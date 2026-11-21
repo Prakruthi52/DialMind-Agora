@@ -83,31 +83,28 @@ export function matchEnum(text: string, options: QuestionOption[]): MatchResult 
 
 // ───────────────────────── policy / mobile ─────────────────────────
 
-const POLICY_RE = /PMFBY-?([A-Z]{2})-?(\d{2}[KR])-?(\d{6})/;
+export const REGISTRATION_DIGITS = 8;
 
-export function matchPolicyRef(raw: string, text: string, regex: string | null): MatchResult {
-  const compact = raw.toUpperCase().replace(/[\s.]/g, '');
-  const policy = compact.match(POLICY_RE);
-  if (policy) {
-    return {
-      status: 'matched',
-      value: `PMFBY-${policy[1]}-${policy[2]}-${policy[3]}`,
-      method: 'regex',
-      confidence: 0.95,
-    };
-  }
+/**
+ * Farmer identification: the standard 8-digit crop-insurance registration number
+ * (policies.registration_no). Only this format is accepted; the DB lookup happens in flow.ts.
+ */
+export function matchRegistrationNo(text: string, regex: string | null): MatchResult {
   const digits = extractDigits(text);
-  const mobile = digits.match(/[6-9]\d{9}/);
-  if (mobile) {
-    const value = mobile[0];
-    if (regex && !new RegExp(regex).test(value)) return nomatch('failed validation regex');
-    return { status: 'matched', value, method: 'regex', confidence: digits.length === 10 ? 0.95 : 0.85 };
+  if (digits.length !== REGISTRATION_DIGITS) {
+    return nomatch(digits ? `heard ${digits.length} digits, a registration number has ${REGISTRATION_DIGITS}` : 'no digits heard');
   }
-  // Six-digit policy suffix ("zero zero zero one two three") → looked up by suffix.
-  if (/^\d{6}$/.test(digits)) {
-    return { status: 'confirm', value: `SUFFIX:${digits}`, method: 'regex', confidence: 0.8 };
-  }
-  return nomatch(digits ? `only ${digits.length} digits heard` : 'no digits heard');
+  if (regex && !new RegExp(regex).test(digits)) return nomatch('failed validation regex');
+  return { status: 'matched', value: digits, method: 'regex', confidence: 0.95 };
+}
+
+/** A 10-digit Indian mobile number. */
+export function matchMobile(text: string, regex: string | null): MatchResult {
+  const digits = extractDigits(text);
+  const mobile = digits.match(/[6-9]d{9}/);
+  if (!mobile) return nomatch(digits ? `only ${digits.length} digits heard` : 'no digits heard');
+  if (regex && !new RegExp(regex).test(mobile[0])) return nomatch('failed validation regex');
+  return { status: 'matched', value: mobile[0], method: 'regex', confidence: digits.length === 10 ? 0.95 : 0.85 };
 }
 
 // ───────────────────────── dates ─────────────────────────
@@ -274,8 +271,9 @@ export function matchAnswer(
     case 'enum':
       return matchEnum(text, opts.options);
     case 'policy_ref':
+      return matchRegistrationNo(text, question.validation_regex);
     case 'mobile':
-      return matchPolicyRef(raw, text, question.validation_regex);
+      return matchMobile(text, question.validation_regex);
     case 'date':
       return matchDate(text, data, opts.now);
     case 'area':

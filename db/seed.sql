@@ -38,11 +38,11 @@ INSERT OR REPLACE INTO agent_texts (key, text_en, text_hi, text_kn) VALUES
 INSERT OR REPLACE INTO questions
 (code, seq, answer_type, text_en, text_hi, text_kn, hint_en, validation_regex, min_value, max_value, required, ask_if, max_retries) VALUES
 ('policy_ref', 10, 'policy_ref',
- 'Please tell me your registered mobile number or your crop insurance policy number.',
- 'अपना रजिस्टर्ड मोबाइल नंबर या फसल बीमा पॉलिसी नंबर बताइए।',
- 'ನಿಮ್ಮ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಅಥವಾ ಬೆಳೆ ವಿಮೆ ಪಾಲಿಸಿ ಸಂಖ್ಯೆಯನ್ನು ಹೇಳಿ.',
- 'A 10-digit mobile number, said digit by digit, is easiest.',
- '^([6-9][0-9]{9}|PMFBY-[A-Z]{2}-[0-9]{2}[KR]-[0-9]{6})$', NULL, NULL, 1, NULL, 3),
+ 'Please tell me your 8-digit crop insurance registration number. It is printed on your policy slip.',
+ 'अपना 8 अंकों का फसल बीमा रजिस्ट्रेशन नंबर बताइए। ये आपकी पॉलिसी की पर्ची पर लिखा होता है।',
+ 'ನಿಮ್ಮ 8 ಅಂಕಿಯ ಬೆಳೆ ವಿಮೆ ನೋಂದಣಿ ಸಂಖ್ಯೆಯನ್ನು ಹೇಳಿ. ಅದು ನಿಮ್ಮ ಪಾಲಿಸಿ ಚೀಟಿಯಲ್ಲಿ ಇರುತ್ತದೆ.',
+ 'Eight digits, said one by one. It is printed on the policy slip.',
+ '^[0-9]{8}$', NULL, NULL, 1, NULL, 3),
 
 ('confirm_identity', 20, 'yes_no',
  'I found a policy in the name of {farmer_name} from {village}. Is that you?',
@@ -184,11 +184,11 @@ INSERT OR REPLACE INTO lexicon (term, kind, value, lang) VALUES
 -- condition DSL (see docs/DESIGN.md §5): eq, in, not_in, gt, lt, days_since_gt, days_between_gt,
 -- policy_found, crop_on_policy, area_exceeds_insured, before_sowing.
 INSERT OR REPLACE INTO rules (code, question_code, description, rule_type, condition, message_en, message_hi, message_kn) VALUES
-('R_POLICY_NOT_FOUND','policy_ref','No policy matches the mobile or policy number','reject',
+('R_POLICY_NOT_FOUND','policy_ref','No policy matches the registration number','reject',
  '{"op":"policy_found","negate":true}',
- 'I could not find a policy with that number. Could you say it again slowly?',
- 'इस नंबर से कोई पॉलिसी नहीं मिली। क्या आप धीरे-धीरे दोबारा बता सकते हैं?',
- 'ಆ ಸಂಖ್ಯೆಯಲ್ಲಿ ಪಾಲಿಸಿ ಸಿಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ನಿಧಾನವಾಗಿ ಮತ್ತೆ ಹೇಳಿ.'),
+ 'I could not find that registration number. Could you check the policy slip and say the 8 digits again slowly?',
+ 'ये रजिस्ट्रेशन नंबर नहीं मिला। पर्ची देखकर 8 अंक एक बार धीरे-धीरे फिर से बताइए?',
+ 'ಈ ನೋಂದಣಿ ಸಂಖ್ಯೆ ಸಿಗಲಿಲ್ಲ. ಚೀಟಿ ನೋಡಿ 8 ಅಂಕಿಗಳನ್ನು ನಿಧಾನವಾಗಿ ಮತ್ತೆ ಹೇಳಿ.'),
 
 ('R_IDENTITY_DENIED','confirm_identity','Caller says the policy is not theirs','branch',
  '{"op":"eq","field":"confirm_identity","value":"no","goto":"policy_ref"}',
@@ -253,10 +253,10 @@ INSERT OR REPLACE INTO rules (code, question_code, description, rule_type, condi
 
 
 -- ───────────────────────── Mock policies (demo data, not real people) ─────────────────────────
-INSERT OR REPLACE INTO policies (policy_no, farmer_name, mobile, aadhaar_last4, village, district, state, season, insurer, bank_account_last4, preferred_lang) VALUES
-('PMFBY-KA-26K-000123','Ramesh Gowda','9000000101','4321','Hosahalli','Mandya','Karnataka','kharif-2026','Demo Krishi Insurance','7781','kn'),
-('PMFBY-KA-26K-000456','Lakshmamma','9000000202','8890','Kurudumale','Kolar','Karnataka','kharif-2026','Demo Krishi Insurance','1204','kn'),
-('PMFBY-MP-26K-000789','Suresh Patel','9000000303','5567','Ichhawar','Sehore','Madhya Pradesh','kharif-2026','Demo Krishi Insurance','3398','hi');
+INSERT OR REPLACE INTO policies (policy_no, registration_no, farmer_name, mobile, aadhaar_last4, village, district, state, season, insurer, bank_account_last4, preferred_lang) VALUES
+('PMFBY-KA-26K-000123','41000101','Ramesh Gowda','9000000101','4321','Hosahalli','Mandya','Karnataka','kharif-2026','Demo Krishi Insurance','7781','kn'),
+('PMFBY-KA-26K-000456','41000202','Lakshmamma','9000000202','8890','Kurudumale','Kolar','Karnataka','kharif-2026','Demo Krishi Insurance','1204','kn'),
+('PMFBY-MP-26K-000789','41000303','Suresh Patel','9000000303','5567','Ichhawar','Sehore','Madhya Pradesh','kharif-2026','Demo Krishi Insurance','3398','hi');
 
 INSERT OR REPLACE INTO insured_crops (policy_no, crop, survey_no, insured_area_acres, sum_insured_inr, sowing_date) VALUES
 ('PMFBY-KA-26K-000123','paddy','112/3',2.5,95000,'2026-07-10'),

@@ -7,6 +7,8 @@ import { todayIST } from './match';
 
 export interface PolicyRow {
   policy_no: string;
+  /** Standard 8-digit registration number the farmer says on the call. */
+  registration_no: string;
   farmer_name: string;
   mobile: string;
   village: string;

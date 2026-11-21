@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS rules (
 
 CREATE TABLE IF NOT EXISTS policies (
   policy_no         TEXT PRIMARY KEY,        -- e.g. 'PMFBY-KA-25K-000123'
+  registration_no   TEXT,                    -- standard 8-digit number the farmer says on the call (unique index added in lib/db.ts)
   farmer_name       TEXT NOT NULL,
   mobile            TEXT NOT NULL,
   aadhaar_last4     TEXT NOT NULL,
@@ -254,4 +255,10 @@ CREATE TABLE IF NOT EXISTS app_locks (
   key               TEXT PRIMARY KEY,
   busy_until_ms     INTEGER NOT NULL DEFAULT 0,
   last_warm_ms      INTEGER NOT NULL DEFAULT 0
+);
+
+-- Small key/value store for one-off data migrations (see lib/db.ts).
+CREATE TABLE IF NOT EXISTS app_meta (
+  key               TEXT PRIMARY KEY,
+  value             TEXT NOT NULL
 );

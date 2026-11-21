@@ -27,6 +27,11 @@ function readSql(file: string): string {
 async function init(): Promise<void> {
   const db = client();
   await db.executeMultiple(readSql('schema.sql'));
+  // Columns added after the first deploy (CREATE TABLE IF NOT EXISTS never alters a table).
+  const policyCols = await db.execute('PRAGMA table_info(policies)');
+  if (!policyCols.rows.some((c) => c.name === 'registration_no')) {
+    await db.execute('ALTER TABLE policies ADD COLUMN registration_no TEXT');
+  }
   const seeded = await db.execute(
     "SELECT COUNT(*) AS n FROM questions",
   );
@@ -39,6 +44,27 @@ async function init(): Promise<void> {
   if (Number(translated.rows[0]?.n ?? 0) === 0 || forceReseed) {
     await db.executeMultiple(readSql('seed_i18n.sql'));
   }
+  await migrateData(db);
+}
+
+// Bump when a database seeded earlier needs data changes (see db/migrate_v*.sql).
+const DATA_VERSION = '2';
+
+async function migrateData(db: Client): Promise<void> {
+  const version = await db.execute("SELECT value FROM app_meta WHERE key = 'data_version'");
+  if (String(version.rows[0]?.value ?? '') !== DATA_VERSION) {
+    // v2: standard 8-digit registration numbers (+ reworded identification question).
+    await db.executeMultiple(readSql('migrate_v2.sql'));
+    await db.executeMultiple(readSql('seed_i18n.sql'));
+    await db.execute({
+      sql: `INSERT INTO app_meta (key, value) VALUES ('data_version', ?)
+            ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+      args: [DATA_VERSION],
+    });
+  }
+  await db.execute(
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_policies_registration ON policies(registration_no)',
+  );
 }
 
 export async function getDb(): Promise<Client> {
