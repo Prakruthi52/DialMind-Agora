@@ -20,6 +20,16 @@ const WIDTH = 960;
 const HEIGHT = 540;
 const FPS = 15;
 
+/** Records a recording problem in the session trace (shows under Errors in the console). */
+function reportProblem(sessionId: string, message: string) {
+  const body = JSON.stringify({ events: [{ kind: 'error', payload: { source: 'recording', message, at: Date.now() } }] });
+  try {
+    if (!navigator.sendBeacon?.(`/api/sessions/${sessionId}/events`, new Blob([body], { type: 'application/json' }))) {
+      fetch(`/api/sessions/${sessionId}/events`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
+    }
+  } catch {}
+}
+
 function videoFor(track: MediaStreamTrack | undefined, el: HTMLVideoElement | null): HTMLVideoElement | null {
   if (!track) return null;
   const video = el ?? Object.assign(document.createElement('video'), { muted: true, playsInline: true });
@@ -48,7 +58,11 @@ export function useCallRecorder(sessionId: string | undefined, active: boolean, 
 
   // Start once the call is live and the session id is known.
   useEffect(() => {
-    if (!enabled || !active || !sessionId || stateRef.current || typeof MediaRecorder === 'undefined') return;
+    if (!enabled || !active || !sessionId || stateRef.current) return;
+    if (typeof MediaRecorder === 'undefined') {
+      reportProblem(sessionId, 'This browser cannot record calls (no MediaRecorder).');
+      return;
+    }
 
     const canvas = document.createElement('canvas');
     canvas.width = WIDTH;
@@ -109,7 +123,7 @@ export function useCallRecorder(sessionId: string | undefined, active: boolean, 
 
     const stream = new MediaStream([...canvas.captureStream(FPS).getVideoTracks(), ...dest.stream.getAudioTracks()]);
     const mimeType = ['video/webm;codecs=vp8,opus', 'video/webm'].find((t) => MediaRecorder.isTypeSupported(t));
-    const recorder = new MediaRecorder(stream, { ...(mimeType && { mimeType }), videoBitsPerSecond: 900_000 });
+    const recorder = new MediaRecorder(stream, { ...(mimeType && { mimeType }), videoBitsPerSecond: 450_000, audioBitsPerSecond: 48_000 });
     const chunks: Blob[] = [];
     recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     recorder.start(5000);
@@ -127,7 +141,10 @@ export function useCallRecorder(sessionId: string | undefined, active: boolean, 
     st.recorder.onstop = async () => {
       st.audio.close().catch(() => {});
       const blob = new Blob(st.chunks, { type: 'video/webm' });
-      if (blob.size < 10_000) return;
+      if (blob.size < 10_000) {
+        reportProblem(st.sessionId, `Recording was empty (${blob.size} bytes).`);
+        return;
+      }
       try {
         const { upload } = await import('@vercel/blob/client');
         const result = await upload(`recordings/${st.sessionId}.webm`, blob, {
@@ -142,6 +159,7 @@ export function useCallRecorder(sessionId: string | undefined, active: boolean, 
         });
       } catch (error) {
         console.warn('Recording upload failed:', error);
+        reportProblem(st.sessionId, `Upload failed (${Math.round(blob.size / 1e6)} MB): ${error instanceof Error ? error.message : String(error)}`.slice(0, 400));
       }
     };
     if (st.recorder.state !== 'inactive') st.recorder.stop();
