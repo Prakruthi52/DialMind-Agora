@@ -516,6 +516,23 @@ export default function ConversationComponent({
   // Publish the mic only; usePublish waits for the RTC connection.
   usePublish([localMicrophoneTrack]);
 
+  // Live mic level for the self-tile meter, plus a warning when the mic is on but silent
+  // (wrong input device, mic held by another app, OS-level mute): the agent then hears nothing.
+  const [micLevel, setMicLevel] = useState(0);
+  const [micSilent, setMicSilent] = useState(false);
+  useEffect(() => {
+    if (!localMicrophoneTrack || !joinSuccess) return;
+    const startedAt = Date.now();
+    let lastHeard = startedAt;
+    const id = setInterval(() => {
+      const level = isMicOn ? localMicrophoneTrack.getVolumeLevel() : 0;
+      setMicLevel(level);
+      if (!isMicOn || level > 0.02) lastHeard = Date.now();
+      setMicSilent(Date.now() - lastHeard > 12_000);
+    }, 300);
+    return () => clearInterval(id);
+  }, [localMicrophoneTrack, joinSuccess, isMicOn]);
+
   const avatarUser = useMemo(
     () => (avatarUID ? remoteUsers.find((u) => String(u.uid) === avatarUID) : undefined),
     [remoteUsers, avatarUID],
@@ -743,6 +760,17 @@ export default function ConversationComponent({
             )}
             <span className="absolute bottom-1.5 left-2 flex items-center gap-1 rounded-full bg-black/50 px-2 py-0.5 text-[11px]">
               {!isMicOn && <MicOff className="h-3 w-3 text-[#ff8a80]" />}
+              {isMicOn && (
+                <span className="flex h-3 items-end gap-[2px]" aria-hidden>
+                  {[0.04, 0.12, 0.25].map((threshold) => (
+                    <span
+                      key={threshold}
+                      className={`w-[3px] rounded-sm transition-all ${micLevel > threshold ? 'bg-[#7ee2a8]' : 'bg-white/30'}`}
+                      style={{ height: `${4 + threshold * 32}px` }}
+                    />
+                  ))}
+                </span>
+              )}
               {firstName}
             </span>
           </div>
@@ -762,13 +790,15 @@ export default function ConversationComponent({
           </div>
 
           {/* Warnings */}
-          {(agentJoinError || latestIssue) && (
+          {(agentJoinError || latestIssue || micSilent) && (
             <div className="absolute left-1/2 top-16 z-30 flex max-w-[90%] -translate-x-1/2 items-center gap-2 rounded-xl bg-amber-500/90 px-3 py-2 text-sm text-black sm:top-5">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span className="line-clamp-2">
                 {agentJoinError
                   ? t('agentJoinError')
-                  : t('connectionIssue', { message: latestIssue?.message ?? '' })}
+                  : latestIssue
+                    ? t('connectionIssue', { message: latestIssue.message ?? '' })
+                    : t('micSilent')}
               </span>
             </div>
           )}
