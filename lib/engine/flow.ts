@@ -127,6 +127,18 @@ export async function attachAgent(sessionId: string, agentId: string, avatarUsed
   ]);
 }
 
+/** Server-side trace entry (shows under Errors in the claims console). */
+export async function logServerError(sessionId: string, source: string, error: unknown, extra: Record<string, unknown> = {}) {
+  const e = error as { message?: string; statusCode?: number; body?: unknown };
+  const body = e?.body === undefined ? '' : ` ${JSON.stringify(e.body).slice(0, 400)}`;
+  const message = `${e?.statusCode ? `${e.statusCode} ` : ''}${e?.message ?? String(error)}${body}`.slice(0, 700);
+  await run('INSERT INTO session_events (session_id, kind, payload) VALUES (?, ?, ?)', [
+    sessionId,
+    'error',
+    JSON.stringify({ source, message, ...extra, at: Date.now() }),
+  ]).catch(() => {});
+}
+
 export async function endSession(sessionId: string) {
   await run(
     `UPDATE sessions SET ended_at = COALESCE(ended_at, datetime('now')),
