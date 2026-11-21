@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { ArrowRight, Camera, Languages, ShieldCheck, Sprout } from 'lucide-react';
 import type { FarmerProfile, LanguageCode } from '@/types/conversation';
 import { getTranslator } from '@/lib/i18n';
@@ -47,15 +46,11 @@ export function LoginScreen({
           <DialMindLogo tone="light" />
 
           <div className="mt-6 flex items-center gap-4 lg:mt-10 lg:items-start lg:gap-8">
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full ring-4 ring-[#f4a51c] lg:h-40 lg:w-40">
-              <Image
-                src="/vanya.webp"
-                alt="Vanya, the DialMind claims assistant"
-                fill
-                priority
-                sizes="(min-width: 1024px) 10rem, 5rem"
-                className="object-cover object-[50%_25%]"
-              />
+            <div
+              className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-[#f4a51c] text-[#0f3d27] ring-4 ring-[#f4a51c]/40 lg:h-32 lg:w-32"
+              aria-hidden="true"
+            >
+              <Sprout className="h-10 w-10 lg:h-16 lg:w-16" />
             </div>
             <div>
               <p className="text-sm font-semibold uppercase tracking-wider text-[#f4c451]">{t('heroEyebrow')}</p>

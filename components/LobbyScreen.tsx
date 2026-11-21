@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import {
   Camera,
   CameraOff,
@@ -11,6 +10,7 @@ import {
   MicOff,
   PhoneCall,
   ScrollText,
+  Sprout,
   Wheat,
 } from 'lucide-react';
 import type { FarmerProfile, LanguageCode } from '@/types/conversation';
@@ -168,14 +168,8 @@ export function LobbyScreen({
           <p className="mt-1 text-[#4b5d53]">{t('readyLine')}</p>
 
           <div className="mt-5 flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm">
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl">
-              <Image
-                src="/vanya.webp"
-                alt="Vanya"
-                fill
-                sizes="4rem"
-                className="object-cover object-[50%_30%]"
-              />
+            <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-[#fdf0d5] text-[#1f6b45]" aria-hidden="true">
+              <Sprout className="h-8 w-8" />
             </div>
             <div className="min-w-0">
               <p className="flex items-center gap-2 font-semibold">
