@@ -247,3 +247,11 @@ CREATE INDEX IF NOT EXISTS idx_tool_calls_session ON tool_calls(session_id);
 CREATE INDEX IF NOT EXISTS idx_events_session ON session_events(session_id);
 CREATE INDEX IF NOT EXISTS idx_options_question ON question_options(question_code);
 CREATE INDEX IF NOT EXISTS idx_policies_mobile ON policies(mobile);
+
+-- Cross-instance coordination (serverless functions do not share memory). Used to make sure
+-- the lobby's avatar warm-up and a real call never hold Anam's single free-plan session at once.
+CREATE TABLE IF NOT EXISTS app_locks (
+  key               TEXT PRIMARY KEY,
+  busy_until_ms     INTEGER NOT NULL DEFAULT 0,
+  last_warm_ms      INTEGER NOT NULL DEFAULT 0
+);

@@ -14,10 +14,13 @@ import {
 import { ClientStartRequest, AgentResponse } from '@/types/conversation';
 import { DEFAULT_AGENT_UID, DEFAULT_AVATAR_UID } from '@/lib/agora';
 import { LANGUAGES, buildVanyaPrompt, isLanguageCode, type LanguageCode } from '@/lib/vanya';
-import { anamAvatarId, isAvatarEnabled, waitForAvatarWarmup } from '@/lib/avatar-warmup';
+import { anamAvatarId, isAvatarEnabled, markAvatarWarm, waitForAvatarWarmup } from '@/lib/avatar-warmup';
 import { attachAgent, createSession, getCurrentQuestion } from '@/lib/engine/flow';
 import { agentText, getInterviewData } from '@/lib/engine/data';
 import { buildTools } from '@/lib/tools';
+
+// Worst case: cold avatar start (~30 s) + retry + voice-only fallback.
+export const maxDuration = 90;
 
 // agentUid identifies the AI in the RTC channel and shares its default with the client.
 const agentUid = String(DEFAULT_AGENT_UID);
@@ -239,13 +242,24 @@ export async function POST(request: NextRequest) {
     if (avatarEnabled) await waitForAvatarWarmup();
     let agentId: string;
     if (avatarEnabled) {
+      const firstTry = Date.now();
       try {
         agentId = await startSession(withAvatar());
-      } catch (avatarError) {
-        console.warn('Avatar start failed, falling back to voice-only:', avatarError);
-        avatarEnabled = false;
-        agentId = await startSession(agent);
+      } catch (firstError) {
+        // One retry: right after a cold-start failure (or a session Anam had not yet released)
+        // the next start usually succeeds in ~2 s. Skip it if we have already waited too long.
+        console.warn('Avatar start failed, retrying once:', firstError);
+        try {
+          if (Date.now() - firstTry > 35_000) throw firstError;
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          agentId = await startSession(withAvatar());
+        } catch (avatarError) {
+          console.warn('Avatar start failed again, falling back to voice-only:', avatarError);
+          avatarEnabled = false;
+          agentId = await startSession(agent);
+        }
       }
+      if (avatarEnabled) await markAvatarWarm().catch(() => {});
     } else {
       agentId = await startSession(agent);
     }
