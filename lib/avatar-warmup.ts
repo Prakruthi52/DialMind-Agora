@@ -28,6 +28,18 @@ type WarmState = { lastWarmAt: number; inFlight: Promise<void> | null };
 const g = globalThis as typeof globalThis & { __avatarWarm?: WarmState };
 const state: WarmState = (g.__avatarWarm ??= { lastWarmAt: 0, inFlight: null });
 
+// Stock Anam avatar used if NEXT_ANAM_AVATAR_ID is missing or malformed (e.g. clipped when pasted).
+const FALLBACK_AVATAR_ID = 'a7eb25e8-8c31-460d-a397-8cd8010c76d1';
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** The configured avatar ID, validated. A typo would otherwise fail silently inside Anam. */
+export function anamAvatarId(): string {
+  const id = (process.env.NEXT_ANAM_AVATAR_ID ?? '').trim();
+  if (UUID_RE.test(id)) return id;
+  console.warn(`NEXT_ANAM_AVATAR_ID "${id}" is not a valid avatar ID; using the stock avatar instead.`);
+  return FALLBACK_AVATAR_ID;
+}
+
 export function isAvatarEnabled(): boolean {
   return process.env.NEXT_ENABLE_AVATAR !== 'false' && !!process.env.NEXT_ANAM_API_KEY;
 }
@@ -52,7 +64,7 @@ async function runWarmup(): Promise<void> {
     .withAvatar(
       new AnamAvatar({
         apiKey: process.env.NEXT_ANAM_API_KEY!,
-        avatarId: process.env.NEXT_ANAM_AVATAR_ID,
+        avatarId: anamAvatarId(),
         additionalParams: {
           agora_uid: String(DEFAULT_AVATAR_UID),
           agora_token: generateConvoAIToken({

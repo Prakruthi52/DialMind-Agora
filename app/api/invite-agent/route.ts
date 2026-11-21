@@ -14,7 +14,7 @@ import {
 import { ClientStartRequest, AgentResponse } from '@/types/conversation';
 import { DEFAULT_AGENT_UID, DEFAULT_AVATAR_UID } from '@/lib/agora';
 import { LANGUAGES, buildVanyaPrompt, isLanguageCode, type LanguageCode } from '@/lib/vanya';
-import { isAvatarEnabled, waitForAvatarWarmup } from '@/lib/avatar-warmup';
+import { anamAvatarId, isAvatarEnabled, waitForAvatarWarmup } from '@/lib/avatar-warmup';
 import { attachAgent, createSession, getCurrentQuestion } from '@/lib/engine/flow';
 import { agentText, getInterviewData } from '@/lib/engine/data';
 import { buildTools } from '@/lib/tools';
@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
       agent.withAvatar(
         new AnamAvatar({
           apiKey: requireEnv('NEXT_ANAM_API_KEY'),
-          avatarId: process.env.NEXT_ANAM_AVATAR_ID,
+          avatarId: anamAvatarId(),
           additionalParams: {
             agora_uid: avatarUid,
             agora_token: generateConvoAIToken({
