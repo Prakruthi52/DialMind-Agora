@@ -268,7 +268,8 @@ function fill(template: string, ctx: Ctx, extra: Record<string, string> = {}): s
     crop: ctx.crop ? cropLabel(ctx, ctx.crop.crop) : '',
     insured_area: ctx.crop ? String(ctx.crop.insured_area_acres) : '',
     sowing_date: ctx.crop ? formatDate(ctx.crop.sowing_date, lang) : '',
-    mobile_last4: ctx.policy?.mobile.slice(-4) ?? '',
+    // The confirmation goes to the number the caller signed in with (see fileClaim).
+    mobile_last4: (ctx.session.caller_mobile || ctx.policy?.mobile || '').slice(-4),
     summary: buildSummary(ctx),
     ...extra,
   };
@@ -642,7 +643,7 @@ export async function setLanguage(sessionId: string, language: LanguageCode): Pr
   const q = nextQuestion(ctx);
   return {
     result: 'question',
-    instruction: `Language switched. Continue in ${LANGUAGES[language].englishName}.`,
+    instruction: `Language switched to ${LANGUAGES[language].englishName}. In ${LANGUAGES[language].englishName}, say in one short line that you will continue in it, then ask the "ask" text. Speak only ${LANGUAGES[language].englishName} from now on.`,
     ...(q ? askPayload(ctx, q) : {}),
   };
 }
@@ -762,7 +763,10 @@ export async function fileClaim(sessionId: string, confirmed: boolean, farmerWor
         `UPDATE follow_ups SET status = ?, channel = ? WHERE claim_id = ? AND kind = 'sms_confirmation'`,
         [result.ok ? 'sent' : 'failed', result.channel ?? 'whatsapp', claimId],
       );
-      if (!result.ok) console.warn('Claim confirmation not delivered:', result.error);
+      if (!result.ok) {
+        console.warn('Claim confirmation not delivered:', result.error);
+        await logServerError(sessionId, 'confirmation', result.error ?? 'not delivered', { to_last4: to.slice(-4) });
+      }
     };
     try {
       after(send); // keeps the serverless function alive until the message is sent

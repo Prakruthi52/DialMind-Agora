@@ -13,7 +13,7 @@ import {
 } from 'agora-agents';
 import { ClientStartRequest, AgentResponse } from '@/types/conversation';
 import { DEFAULT_AGENT_UID, DEFAULT_AVATAR_UID } from '@/lib/agora';
-import { LANGUAGES, buildVanyaPrompt, isLanguageCode, type LanguageCode } from '@/lib/vanya';
+import { LANGUAGES, availableLanguages, buildVanyaPrompt, isLanguageCode, type LanguageCode } from '@/lib/vanya';
 import { anamAvatarId, isAvatarEnabled, markAvatarWarm, waitForAvatarWarmup } from '@/lib/avatar-warmup';
 import { attachAgent, createSession, getCurrentQuestion, logServerError } from '@/lib/engine/flow';
 import { agentText, getInterviewData } from '@/lib/engine/data';
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     // → Murf Falcon (BYOK) TTS → optional Anam avatar (BYOK) video.
     const agent = new Agent({
       client,
-      instructions: buildVanyaPrompt(language, farmerName),
+      instructions: buildVanyaPrompt(language, farmerName, availableLanguages()),
       greeting,
       failureMessage,
       maxHistory: 50,
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
           model: 'gpt-4o-mini',
           greetingMessage: greeting,
           ...(toolsEnabled && {
-            tools: buildTools(publicBaseUrl!),
+            tools: buildTools(publicBaseUrl!, availableLanguages()),
             templateVariables: { session_id: sessionId, tool_secret: toolSecret! },
           }),
           failureMessage,

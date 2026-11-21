@@ -1,5 +1,5 @@
 import type { LlmTool } from 'agora-agents';
-import { LANGUAGE_CODES } from '@/lib/vanya';
+import { LANGUAGES, LANGUAGE_CODES, type LanguageCode } from '@/lib/vanya';
 
 // Tool definitions sent to Agora (llm.tools). Agora's cloud calls these HTTPS endpoints
 // synchronously during the conversation. The session id and a shared secret travel as
@@ -37,7 +37,7 @@ function tool(
   } as LlmTool;
 }
 
-export function buildTools(baseUrl: string): LlmTool[] {
+export function buildTools(baseUrl: string, languages: LanguageCode[] = LANGUAGE_CODES): LlmTool[] {
   return [
     tool(
       'getCurrentQuestion',
@@ -85,8 +85,14 @@ export function buildTools(baseUrl: string): LlmTool[] {
     ),
     tool(
       'setLanguage',
-      'Switch the conversation language when the farmer starts speaking a different language.',
-      { language: { type: 'string', description: 'New language.', enum: [...LANGUAGE_CODES] } },
+      'Switch the conversation language when the farmer asks for another supported language or starts speaking one. Never call it for a language outside the enum: apologise and list the supported languages instead.',
+      {
+        language: {
+          type: 'string',
+          description: `New language code: ${languages.map((c) => `${c} = ${LANGUAGES[c].englishName}`).join(', ')}.`,
+          enum: [...languages],
+        },
+      },
       ['language'],
       baseUrl,
     ),
