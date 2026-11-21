@@ -166,6 +166,11 @@ export function ClaimPanel({ state, t, lang }: { state: SessionState | null; t: 
                   )}
                   {label(t, `fu_${f.kind}`, f.kind)}
                   <span className="text-xs font-normal text-white/50">· {formatDay(f.scheduled_for, lang)}</span>
+                  {f.status === 'sent' && (
+                    <span className="rounded-full bg-[#25d366]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#7ff0a8]">
+                      ✓ WhatsApp
+                    </span>
+                  )}
                 </p>
               </li>
             ))}

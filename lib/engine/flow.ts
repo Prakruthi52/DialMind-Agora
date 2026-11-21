@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto';
+import { after } from 'next/server';
+import { isWhatsAppConfigured, sendWhatsApp } from '@/lib/notify/whatsapp';
 import { queryAll, queryOne, run } from '@/lib/db';
 import { LANGUAGES, type LanguageCode } from '@/lib/vanya';
 import {
@@ -686,10 +688,20 @@ export async function fileClaim(sessionId: string, confirmed: boolean, farmerWor
   const surveyorDate = flags.has('R_HIGH_LOSS_PRIORITY') ? day(1) : day(2);
   const followUps: { kind: string; when: string; message: string }[] = [];
   if (a.confirm_sms === 'yes') {
+    const cause = ctx.data.options.find((o) => o.question_code === 'cause_of_loss' && o.value === a.cause_of_loss);
     followUps.push({
       kind: 'sms_confirmation',
       when: isoDate(today),
-      message: `DialMind: Claim ${claimId} registered for ${ctx.crop.crop} (survey ${ctx.crop.survey_no}). Surveyor visit by ${surveyorDate}.`,
+      message: [
+        '🌾 DialMind – crop claim registered',
+        `Claim no: ${claimId}`,
+        `Farmer: ${ctx.policy.farmer_name}, ${ctx.policy.village}`,
+        `Crop: ${cropLabel(ctx, ctx.crop.crop)} (survey ${ctx.crop.survey_no})`,
+        `Loss: ${cause ? optionLabel(cause, lang) : a.cause_of_loss} on ${formatDate(a.loss_date, lang)}, ${area} acres, ${pct}%`,
+        `Surveyor visit by: ${formatDate(surveyorDate, lang)}`,
+        `Estimated payout: ₹${payout.toLocaleString('en-IN')} (final amount after the survey)`,
+        'Keep your bank passbook and crop photos ready. – Vanya, DialMind',
+      ].join('\n'),
     });
   }
   followUps.push({
@@ -710,6 +722,26 @@ export async function fileClaim(sessionId: string, confirmed: boolean, farmerWor
     `UPDATE sessions SET status = 'filed', current_question = NULL, outcome_note = ?, updated_at = datetime('now') WHERE id = ?`,
     [claimId, sessionId],
   );
+
+  // Send the confirmation on WhatsApp to the number the caller signed in with (the sandbox
+  // only delivers to joined numbers), without delaying Vanya's reply.
+  const confirmation = followUps.find((f) => f.kind === 'sms_confirmation');
+  if (confirmation && isWhatsAppConfigured()) {
+    const to = ctx.session.caller_mobile || ctx.policy.mobile;
+    const send = async () => {
+      const result = await sendWhatsApp(to, confirmation.message);
+      await run(
+        `UPDATE follow_ups SET status = ?, channel = 'whatsapp' WHERE claim_id = ? AND kind = 'sms_confirmation'`,
+        [result.ok ? 'sent' : 'failed', claimId],
+      );
+      if (!result.ok) console.warn('WhatsApp confirmation failed:', result.error);
+    };
+    try {
+      after(send); // keeps the serverless function alive until the message is sent
+    } catch {
+      await send(); // outside a request (scripts, tests)
+    }
+  }
 
   const spokenId = claimId.replace(/-/g, ' ').split('').join(' ').replace(/\s+/g, ' ');
   return {
