@@ -23,7 +23,7 @@ export interface MatchResult {
 }
 
 const FUZZY_ACCEPT = 0.9;
-const FUZZY_CONFIRM = 0.8;
+const FUZZY_CONFIRM = 0.85;
 
 const nomatch = (reason: string): MatchResult => ({ status: 'nomatch', method: 'none', confidence: 0, reason });
 
@@ -61,11 +61,14 @@ export function matchEnum(text: string, options: QuestionOption[]): MatchResult 
   }
 
   // 2. Fuzzy against Latin synonyms (absorbs ASR spelling noise: "olavrusti", "togri").
+  // Short words ("badh", "ole") are easy to hit by accident ("blah"), so they need a much
+  // closer match; the score is penalised instead of using separate thresholds.
   let fuzzy: { option: QuestionOption; score: number } | null = null;
   for (const option of options) {
     for (const syn of option.synonyms) {
       if (!/^[a-z ]+$/.test(syn) || syn.length < 3) continue;
-      const score = bestNgramSimilarity(text, syn);
+      const raw = bestNgramSimilarity(text, syn);
+      const score = syn.length <= 5 ? raw - 0.08 : raw;
       if (!fuzzy || score > fuzzy.score) fuzzy = { option, score };
     }
   }
@@ -327,4 +330,43 @@ export function validateInterpreted(
 
 function round(n: number) {
   return Math.round(n * 100) / 100;
+}
+
+// ───────────────────────── interruptions / "say that again" ─────────────────────────
+
+// Short utterances that are not an answer: the farmer was interrupted, greeted, or asked
+// Vanya to repeat. Matched only after normal matching failed, so a real answer always wins.
+const REPEAT_PHRASES = [
+  // English
+  'what', 'sorry', 'pardon', 'repeat', 'again', 'come again', 'say again', 'hello', 'hi', 'hey', 'one more time',
+  "didn't hear", 'did not hear', 'can you repeat', 'not clear', "didn't understand",
+  // Hindi / Hinglish
+  'kya', 'kya bola', 'kya kaha', 'phir se', 'fir se', 'dobara', 'ek baar aur', 'samajh nahi aaya', 'suna nahi', 'sunai nahi diya',
+  'kaun', 'ji', 'haan ji bolo', 'क्या', 'क्या बोला', 'फिर से', 'दोबारा', 'समझ नहीं आया', 'सुनाई नहीं दिया', 'हैलो',
+  // Kannada
+  'enu', 'yenu', 'matte heli', 'innondu sala', 'gottagilla', 'kelistilla', 'ಏನು', 'ಏನ್', 'ಮತ್ತೆ ಹೇಳಿ', 'ಗೊತ್ತಾಗಲಿಲ್ಲ', 'ಕೇಳಿಸ್ಲಿಲ್ಲ',
+  // Tamil
+  'enna', 'ennanga', 'thirumba sollunga', 'puriyala', 'என்ன', 'என்னங்க', 'திரும்ப சொல்லுங்க', 'புரியல', 'கேக்கல',
+  // Telugu
+  'enti', 'emannaru', 'malli cheppandi', 'artham kaaledu', 'ఏంటి', 'ఏమన్నారు', 'మళ్ళీ చెప్పండి', 'అర్థం కాలేదు', 'వినపడలేదు',
+  // Bengali
+  'abar bolun', 'bujhlam na', 'কী', 'কি বললেন', 'আবার বলুন', 'বুঝলাম না', 'শুনতে পাইনি',
+  // Gujarati
+  'shu', 'fari kaho', 'samjayu nahi', 'શું', 'ફરી કહો', 'સમજાયું નહીં', 'સંભળાયું નહીં',
+  // Marathi
+  'kay', 'parat sanga', 'samajla nahi', 'काय', 'परत सांगा', 'पुन्हा सांगा', 'समजलं नाही', 'ऐकू आलं नाही',
+  // Malayalam
+  'enthu', 'onnu koode', 'manassilayilla', 'എന്ത്', 'എന്താ', 'ഒന്നുകൂടി പറയൂ', 'മനസ്സിലായില്ല', 'കേട്ടില്ല',
+  // Punjabi
+  'dubara dasso', 'samajh nahi aayi', 'ਕੀ', 'ਕੀ ਕਿਹਾ', 'ਦੁਬਾਰਾ ਦੱਸੋ', 'ਸਮਝ ਨਹੀਂ ਆਈ', 'ਸੁਣਿਆ ਨਹੀਂ',
+  // Odia
+  'kana', 'au thare kuhantu', 'bujhi parilini', 'କଣ', 'କ\'ଣ', 'ଆଉ ଥରେ କୁହନ୍ତୁ', 'ବୁଝିପାରିଲି ନାହିଁ', 'ଶୁଣିପାରିଲି ନାହିଁ',
+];
+
+/** True when the (normalised) utterance is a short "what? / say again / hello", not an answer. */
+export function isRepeatRequest(text: string): boolean {
+  const t = text.trim();
+  if (!t) return true;
+  if (tokens(t).length > 6) return false;
+  return REPEAT_PHRASES.some((p) => containsPhrase(t, p.toLowerCase()));
 }

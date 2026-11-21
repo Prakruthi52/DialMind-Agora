@@ -122,7 +122,8 @@ export async function POST(request: NextRequest) {
           start_of_speech: {
             mode: 'vad',
             vad_config: {
-              interrupt_duration_ms: 160, // ms of speech before interruption triggers
+              // 400 ms of farmer speech before Vanya stops: coughs, 'haan' and field noise no longer cut her off.
+              interrupt_duration_ms: 400,
               prefix_padding_ms: 300, // audio captured before speech is detected
             },
           },

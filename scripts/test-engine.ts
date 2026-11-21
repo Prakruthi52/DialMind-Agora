@@ -124,6 +124,22 @@ async function main() {
     ['ગઈકાલે', 'accepted'],
   ]);
 
+  await conversation('Interruptions and "say again"', 'hi', [
+    ['kya? phir se boliye', 'repeat'],
+    ['9000000101', 'accepted'],
+    ['hello?', 'repeat'],
+    ['haan ji', 'accepted'],
+    ['समझ नहीं आया', 'repeat'],
+    ['dhaan', 'accepted'],
+    ['blah blah tractor', 'retry'],
+    ['ole pade', 'accepted'],
+  ]);
+
+  await conversation('Tamil interruption', 'ta', [
+    ['என்ன?', 'repeat'],
+    ['9000000202', 'accepted'],
+  ]);
+
   await conversation('LLM fallback after retries', 'en', [
     ['9000000303', 'accepted'],
     ['yes', 'accepted'],

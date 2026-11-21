@@ -28,6 +28,12 @@ INSERT OR REPLACE INTO agent_texts (key, text_en, text_hi, text_kn) VALUES
  'माफ़ कीजिए, ये नुकसान कवर नहीं है। अगर आपको लगता है कुछ गलत है, तो फसल बीमा हेल्पलाइन पर कॉल कर सकते हैं। DialMind को कॉल करने के लिए धन्यवाद।',
  'ಕ್ಷಮಿಸಿ, ಈ ಹಾನಿ ಒಳಗೊಂಡಿಲ್ಲ. ಏನಾದರೂ ತಪ್ಪಾಗಿದೆ ಅನಿಸಿದರೆ, ಬೆಳೆ ವಿಮೆ ಸಹಾಯವಾಣಿಗೆ ಕರೆ ಮಾಡಬಹುದು. DialMind ಗೆ ಕರೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು.');
 
+-- Interruption handling
+INSERT OR REPLACE INTO agent_texts (key, text_en, text_hi, text_kn) VALUES
+('repeat_question', 'Sorry, we spoke over each other. Let me ask again.', 'माफ़ कीजिए, बीच में आवाज़ कट गई। मैं फिर से पूछती हूँ।', 'ಕ್ಷಮಿಸಿ, ಮಧ್ಯದಲ್ಲಿ ಮಾತು ಕಟ್ ಆಯ್ತು. ಮತ್ತೆ ಕೇಳ್ತೀನಿ.');
+INSERT OR REPLACE INTO agent_texts (key, text_en, text_hi, text_kn) VALUES
+('not_understood', 'Sorry, I couldn''t catch that properly.', 'माफ़ कीजिए, ठीक से सुन नहीं पाई।', 'ಕ್ಷಮಿಸಿ, ಸರಿಯಾಗಿ ಕೇಳಿಸ್ಲಿಲ್ಲ.');
+
 -- ───────────────────────── Questions ─────────────────────────
 INSERT OR REPLACE INTO questions
 (code, seq, answer_type, text_en, text_hi, text_kn, hint_en, validation_regex, min_value, max_value, required, ask_if, max_retries) VALUES

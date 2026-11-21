@@ -16,6 +16,7 @@ import {
 import {
   isoDate,
   matchAnswer,
+  isRepeatRequest,
   matchYesNo,
   todayIST,
   validateInterpreted,
@@ -33,6 +34,7 @@ export type ToolResult = {
     | 'accepted'
     | 'confirm'
     | 'retry'
+    | 'repeat'
     | 'needs_interpretation'
     | 'ready_to_file'
     | 'correction_needed'
@@ -428,6 +430,17 @@ export async function submitAnswer(
   }
 
   if (match.status === 'nomatch') {
+    // Interrupted / "what?" / "say again" / just a greeting: not a wrong answer. Apologise,
+    // repeat the full question, and do not count it as a failed attempt.
+    if (!interpretedValue && isRepeatRequest(normalize(raw))) {
+      return {
+        result: 'repeat',
+        instruction:
+          'The farmer did not answer: they were interrupted, asked you to repeat, or only greeted. Say the apology line, then ask the question again in full, slowly. Do not treat this as an answer.',
+        messages: [textFor(ctx, 'repeat_question')],
+        ...askPayload(ctx, q),
+      };
+    }
     await logAnswer(sessionId, q.code, raw, match, false);
     const failures = await queryOne<{ n: number }>(
       `SELECT COUNT(*) AS n FROM answers WHERE session_id = ? AND question_code = ? AND accepted = 0
@@ -448,8 +461,10 @@ export async function submitAnswer(
     }
     return {
       result: 'retry',
-      instruction: 'The answer was not clear. Ask again in simpler words, using the hint.',
+      instruction:
+        'The answer was not clear. Say the apology line, then ask the same question again in simpler words, using the hint or an example.',
       reason: match.reason,
+      messages: [textFor(ctx, 'not_understood')],
       ...askPayload(ctx, q),
     };
   }
